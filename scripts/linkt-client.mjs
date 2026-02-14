@@ -34,7 +34,29 @@ const commands = {
       topic_criteria: topicCriteria,
       signal_types: (args['signal-types'] || 'funding,product_launch,acquisition,leadership_change,hiring_surge,partnership,expansion')
         .split(',')
-        .map(t => ({ type: t.trim(), display: t.trim(), description: '' })),
+        .map(t => {
+          const type = t.trim();
+          const descriptions = {
+            funding: 'Investment rounds, grants, capital raises, and debt financing',
+            product_launch: 'New products, features, major updates, and platform expansions',
+            acquisition: 'Mergers, acquisitions, and asset purchases',
+            leadership_change: 'CEO, executive, and board-level personnel changes',
+            hiring_surge: 'Unusual hiring activity, large hiring announcements, department buildouts',
+            partnership: 'Strategic alliances, integrations, and co-marketing agreements',
+            expansion: 'Geographic expansion, new office openings, new market entry',
+            layoff: 'Workforce reductions, restructuring, and hiring freezes',
+            award: 'Industry recognition, certifications, and analyst rankings',
+            pivot: 'Business model changes and strategic direction shifts',
+            regulatory: 'Compliance issues, legal matters, and regulatory actions',
+            rfp: 'RFP issuance, vendor evaluations, and procurement processes',
+            contract_renewal: 'Contract renewals, renegotiations, and vendor switches',
+            infrastructure: 'Infrastructure changes, cloud migrations, and platform modernization',
+            compliance: 'Compliance pressures, certifications, and audit requirements',
+            job_posting: 'Individual job postings and senior position openings',
+            other: 'Other significant business events',
+          };
+          return { type, display: type, description: descriptions[type] || `Monitor for ${type} events` };
+        }),
       monitoring_frequency: args['frequency'] || 'daily',
       industry_filters: args['industries'] ? args['industries'].split(',') : [],
       geographic_filters: args['geo'] ? args['geo'].split(',') : [],
