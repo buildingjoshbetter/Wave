@@ -47,6 +47,9 @@ const commands = {
     const response = await client.task.create({
       icp_id: args['icp-id'],
       flow_name: 'signal',
+      name: args['name'] || 'Wave Signal Monitor',
+      description: args['description'] || topicCriteria,
+      deployment_name: args['deployment-name'] || 'wave-signal',
       task_config: taskConfig,
     });
 
