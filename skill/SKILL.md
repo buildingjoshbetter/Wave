@@ -235,12 +235,48 @@ Parse logic: split on `_`, check prefix, extract signal ID from suffix.
 
 ## Formatting Rules
 
-- Use HTML tags for Telegram: <b>bold</b>, <i>italic</i>, <code>mono</code>
-- Signal notifications: company name bold, signal type italic, score as percentage
-- Keep individual messages under 3800 chars (leave room for buttons)
-- Use line breaks liberally for readability
-- CRITICAL: Always HTML-escape signal summaries before embedding in Telegram messages.
+**General:**
+- Telegram HTML parse mode: <b>bold</b>, <i>italic</i>, <a href="url">links</a>
+- Max 3800 chars per message (leave room for buttons)
+- NO heavy line separators (no ━━━, no ═══, no ───). Use blank lines instead.
+- NO section headers with emojis (no 🔴 HIGH PRIORITY, no 🟡 WORTH KNOWING).
+  Just use bold text for section names.
+- NO <code> blocks around signal summaries. Just write the text normally.
+- CRITICAL: Always HTML-escape signal summaries before embedding in messages.
   Unescaped < or & characters cause Telegram to silently reject messages.
+
+**Signal notification format:**
+<b>Cursor</b> — <i>product launch</i> — 82%
+Summary text here explaining what happened and why it matters to the user.
+[Tell Me More] [Not Relevant] [Save]
+
+**Briefing format:**
+<b>Wave Briefing</b> — Mon Feb 17, 2026
+
+<b>High Priority</b>
+1. <b>Cursor</b> — product launch — 82%
+Summary in 1-2 lines.
+
+2. <b>OpenAI</b> — acquisition — 95%
+Summary in 1-2 lines.
+
+<b>Worth Knowing</b>
+3. <b>Mistral</b> — partnership — 71%
+Summary in 1 line.
+
+Filtered: 3 signals below threshold.
+Reply with a number for deep dive.
+
+**War room format:**
+<b>WAR ROOM: [headline]</b>
+
+<b>Analyst:</b> 2-3 sentences max.
+<b>Skeptic:</b> 2-3 sentences max.
+<b>Strategist:</b> 2-3 sentences max.
+
+<b>Consensus:</b> 1-2 sentences.
+<b>For you:</b> 1-2 sentences on what it means for the user.
+Relevance: 94%
 
 ## Error Handling
 
