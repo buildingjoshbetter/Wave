@@ -167,8 +167,17 @@ const steps = {
     for (const s of BRIEFING_WORTH) insertSignal(db, s);
     for (const s of BRIEFING_FILTERED) insertSignal(db, s);
 
-    db.prepare(`INSERT OR REPLACE INTO user_profile (id, icp_id, quiet_hours_enabled)
-      VALUES (1, 'demo', 0)`).run();
+    // Back up real profile before overwriting with demo ICP
+    const existingProfile = db.prepare('SELECT * FROM user_profile WHERE id = 1').get();
+    db.prepare('CREATE TABLE IF NOT EXISTS _demo_profile_backup (data TEXT)').run();
+    db.prepare('DELETE FROM _demo_profile_backup').run();
+    if (existingProfile) {
+      db.prepare('INSERT INTO _demo_profile_backup (data) VALUES (?)').run(JSON.stringify(existingProfile));
+      db.prepare(`UPDATE user_profile SET icp_id = 'demo' WHERE id = 1`).run();
+    } else {
+      db.prepare(`INSERT OR REPLACE INTO user_profile (id, icp_id, quiet_hours_enabled)
+        VALUES (1, 'demo', 0)`).run();
+    }
 
     db.close();
     console.log(JSON.stringify({
@@ -236,6 +245,31 @@ const steps = {
   4() {
     const db = openDb();
     insertSignal(db, WARROOM_SIGNAL);
+
+    // Restore real profile from backup
+    let profileRestored = false;
+    try {
+      const backup = db.prepare('SELECT data FROM _demo_profile_backup LIMIT 1').get();
+      if (backup && backup.data) {
+        const p = JSON.parse(backup.data);
+        db.prepare(`UPDATE user_profile SET
+          icp_id = ?, task_id = ?, schedule_id = ?,
+          interests_raw = ?, interests_json = ?,
+          user_name = ?, user_location = ?, user_timezone = ?,
+          negative_filters = ?, quiet_hours_enabled = ?,
+          telegram_chat_id = ?, updated_at = datetime('now')
+          WHERE id = 1`).run(
+          p.icp_id, p.task_id, p.schedule_id,
+          p.interests_raw, p.interests_json,
+          p.user_name, p.user_location, p.user_timezone,
+          p.negative_filters, p.quiet_hours_enabled,
+          p.telegram_chat_id
+        );
+        db.prepare('DROP TABLE IF EXISTS _demo_profile_backup').run();
+        profileRestored = true;
+      }
+    } catch (_) { /* backup table might not exist */ }
+
     db.close();
     console.log(JSON.stringify({
       step: 4, action: 'inject_signal',
@@ -245,6 +279,7 @@ const steps = {
       entity: 'OpenAI, Windsurf',
       summary: WARROOM_SIGNAL.summary,
       war_room: true,
+      profile_restored: profileRestored,
     }));
   },
 };
