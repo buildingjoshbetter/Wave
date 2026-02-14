@@ -10,8 +10,14 @@ const __dirname = dirname(fileURLToPath(import.meta.url));
 const DB_PATH = join(__dirname, '..', 'data', 'signal-radar.db');
 const db = new Database(DB_PATH, { readonly: true });
 
-const icpId = process.argv.find(a => a.startsWith('--icp-id'))?.split('=')[1]
-  || process.argv[process.argv.indexOf('--icp-id') + 1];
+const icpIdIdx = process.argv.indexOf('--icp-id');
+const icpId = process.argv.find(a => a.startsWith('--icp-id='))?.split('=')[1]
+  || (icpIdIdx !== -1 ? process.argv[icpIdIdx + 1] : undefined);
+
+if (!icpId) {
+  console.error(JSON.stringify({ error: 'Missing --icp-id' }));
+  process.exit(1);
+}
 
 const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 

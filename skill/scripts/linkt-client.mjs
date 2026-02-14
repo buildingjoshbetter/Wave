@@ -3,7 +3,6 @@
 // Usage: node linkt-client.mjs <command> [--flags]
 
 import Linkt from '@linkt/sdk';
-import { parseArgs } from 'node:util';
 
 const client = new Linkt({
   apiKey: process.env.LINKT_API_KEY,

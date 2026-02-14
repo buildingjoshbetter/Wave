@@ -61,17 +61,21 @@ async function injectSignal(key, delayMs) {
 
   if (delayMs > 0) await new Promise(r => setTimeout(r, delayMs));
 
-  // Overwrite timestamp to NOW
-  const payload = { ...signal };
-  if (payload.created_at) payload.created_at = new Date().toISOString();
-  if (payload.signals) {
-    payload.signals = payload.signals.map(s => ({
-      ...s,
-      created_at: new Date().toISOString(),
-    }));
-  }
-
   try {
+    // Briefing is special: prompt agent to run /radar-briefing flow
+    // (don't inject a signal -- the briefing aggregates existing signals from SQLite)
+    if (key === 'briefing') {
+      execSync(`openclaw message send --channel internal --target signal-radar \
+        --message 'Generate morning briefing per /radar-briefing instructions. ICP ID: demo.'`);
+      console.log(`[OK] ${key} -- agent prompted to generate briefing`);
+      lastKey = key;
+      return;
+    }
+
+    // Overwrite timestamp to NOW
+    const payload = { ...signal };
+    if (payload.created_at) payload.created_at = new Date().toISOString();
+
     // 1. Insert into SQLite (same as what polling would do)
     const db = new Database(DB_PATH);
     db.pragma('journal_mode = WAL');
