@@ -1,0 +1,11 @@
+{
+  "name": "signal-radar",
+  "version": "1.0.0",
+  "description": "Signal Radar - Personal intelligence agent for OpenClaw",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "@linkt/sdk": "^1.0.0",
+    "better-sqlite3": "^11.0.0"
+  }
+}
