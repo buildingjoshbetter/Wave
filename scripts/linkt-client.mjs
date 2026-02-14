@@ -49,7 +49,7 @@ const commands = {
       flow_name: 'signal',
       name: args['name'] || 'Wave Signal Monitor',
       description: args['description'] || topicCriteria,
-      deployment_name: args['deployment-name'] || 'wave-signal',
+      deployment_name: args['deployment-name'] || 'main',
       task_config: taskConfig,
     });
 
