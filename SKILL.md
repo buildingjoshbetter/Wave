@@ -35,25 +35,30 @@ partnerships, regulatory changes) and deliver only what matters to the user.
 ## Commands & Intents
 
 ### /radar-setup (Onboarding)
-When user sends a message describing their interests, business, or role:
-1. Read `{baseDir}/references/onboarding-flow.md` for the full conversation flow.
-2. Extract: company names, industries, topics of interest, geographic focus, signal types.
-3. Create ICP: `node {baseDir}/scripts/linkt-client.mjs create-icp --data '{"name":"Wave Profile","description":"<user context describing what they care about>","companies":["Company A","Company B"],"industries":["AI","SaaS"],"geographic":["United States"]}'`
-   The companies, industries, and geographic arrays are combined into a SINGLE entity_target with rich markdown criteria.
-   Linkt uses this to understand what kind of companies to monitor. Response contains `icp_id`.
-4. Create sheet (REQUIRED for entity storage): `node {baseDir}/scripts/linkt-client.mjs create-sheet --icp-id <icp_id> --name 'Wave Companies'`
-   Without a sheet, signal runs will FAIL with "company sheet not found". Response contains `sheet_id`.
-5. Create task: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <icp_id> --topic 'Monitor Company A and Company B for funding, product launches, leadership changes, and competitive moves in the AI industry' --name 'Wave Signal Monitor'`
-   The --topic should be a natural language description mentioning the specific companies AND what signals to look for.
-   Response contains `task_id`.
-6. Execute first run: `node {baseDir}/scripts/linkt-client.mjs execute-task --task-id <task_id> --icp-id <icp_id>`
-   This triggers the first signal scan. Response contains `run_id` and `status`.
-7. Create schedule: `node {baseDir}/scripts/linkt-client.mjs create-schedule --task-id <task_id> --icp-id <icp_id> --frequency daily`
-   Frequency options: daily, twice-daily, weekly, hourly, every-30m. Or use --cron for custom.
-8. CRITICAL -- persist profile to SQLite (cron jobs run in isolated sessions and CANNOT access session memory):
-   `node {baseDir}/scripts/feedback-store.mjs save-profile --icp-id <id> --task-id <id> --schedule-id <id> --interests-raw '<what user said>' --interests-json '<structured json>'`
-9. To read the saved profile later: `node {baseDir}/scripts/feedback-store.mjs get-profile`
-10. Confirm to user what you will monitor and how often.
+When user says "wave", "set up wave", or starts their first conversation:
+1. Read `{baseDir}/references/onboarding-flow.md` for the full step-by-step conversation flow.
+2. Follow the flow EXACTLY. One question at a time. Wait for each response before continuing.
+3. The flow has 6 steps:
+   - Step 1: Welcome + show capabilities + ask for Linkt API key
+   - Step 2: Validate API key (skip if already in env)
+   - Step 3: Ask about the user (role, interests) then ask which companies to monitor
+   - Step 4: Ask where they're based (for timezone and regional relevance)
+   - Step 5: Show confirmation profile with similar company suggestions + [ Looks good ] / [ Edit ] buttons
+   - Step 6: Create all Linkt resources and persist to SQLite
+
+4. When creating Linkt resources in Step 6:
+   a. Create ICP: `node {baseDir}/scripts/linkt-client.mjs create-icp --data '<json>'`
+   b. Create sheet: `node {baseDir}/scripts/linkt-client.mjs create-sheet --icp-id <icp_id> --name 'Wave Companies'`
+   c. Create task: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <icp_id> --topic '<criteria>' --name 'Wave Signal Monitor'`
+   d. Execute first run: `node {baseDir}/scripts/linkt-client.mjs execute-task --task-id <task_id> --icp-id <icp_id>`
+   e. Create schedule: `node {baseDir}/scripts/linkt-client.mjs create-schedule --task-id <task_id> --icp-id <icp_id> --frequency daily`
+
+5. CRITICAL -- persist profile to SQLite with timezone (cron jobs CANNOT access session memory):
+   `node {baseDir}/scripts/feedback-store.mjs save-profile --icp-id <id> --task-id <id> --schedule-id <id> --interests-raw '<text>' --interests-json '<json>' --user-name '<name>' --user-location '<city>' --user-timezone '<tz>'`
+
+6. Set cron job timezones to match the user's timezone from Step 4 — NOT hardcoded to any default.
+
+7. To read the saved profile later: `node {baseDir}/scripts/feedback-store.mjs get-profile`
 
 ### /radar-health (Health Check & Self-Repair)
 When user says "why isn't this working", "wave is broken", "not getting signals",
@@ -318,11 +323,16 @@ On the FIRST user message in any session, run a quick profile check:
 
 ## Cron Job Setup
 
-When setting up cron jobs during onboarding, use GENERIC messages that do NOT contain ICP IDs:
-- Signal poll (every 30 min): `"Execute: node scripts/signal-poll.mjs --since 30m. Script reads ICP from SQLite automatically. If it fails, run health-check.mjs --repair and report the result."`
-- Morning briefing (daily 8am): `"Execute: node scripts/briefing-builder.mjs. Script reads ICP from SQLite automatically. Format the output as a morning briefing. If it fails, run health-check.mjs --repair and report the result."`
+When setting up cron jobs during onboarding, use GENERIC messages that do NOT contain ICP IDs.
+Use the user's timezone from their profile (collected during onboarding Step 4).
+
+- Signal poll (every 30 min), timezone from user profile:
+  `"Execute: node scripts/signal-poll.mjs --since 30m. Script reads ICP from SQLite automatically. If it fails, run health-check.mjs --repair and report the result."`
+- Morning briefing (daily 8am), timezone from user profile:
+  `"Execute: node scripts/briefing-builder.mjs. Script reads ICP from SQLite automatically. Format the output as a morning briefing. If it fails, run health-check.mjs --repair and report the result."`
 
 NEVER include `--icp-id` in cron messages. Scripts auto-resolve from SQLite `user_profile`.
+NEVER hardcode timezone. Always use the timezone from the user's profile (`user_timezone` field).
 
 ## When Something Goes Wrong
 

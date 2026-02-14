@@ -41,6 +41,7 @@ CREATE TABLE IF NOT EXISTS user_profile (
     id INTEGER PRIMARY KEY CHECK (id = 1), telegram_chat_id TEXT,
     icp_id TEXT, task_id TEXT, schedule_id TEXT,
     interests_raw TEXT, interests_json TEXT,
+    user_name TEXT, user_location TEXT, user_timezone TEXT,
     negative_filters TEXT DEFAULT '[]',
     quiet_hours_enabled INTEGER DEFAULT 1,
     created_at TEXT DEFAULT (datetime('now')),
@@ -141,11 +142,12 @@ const commands = {
       process.exit(1);
     }
     db.prepare(`INSERT OR REPLACE INTO user_profile
-      (id, icp_id, task_id, schedule_id, interests_raw, interests_json, telegram_chat_id, updated_at)
-      VALUES (1, ?, ?, ?, ?, ?, ?, datetime('now'))`)
+      (id, icp_id, task_id, schedule_id, interests_raw, interests_json, telegram_chat_id, user_name, user_location, user_timezone, updated_at)
+      VALUES (1, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))`)
       .run(icpId, args['task-id'] || null, args['schedule-id'] || null,
         args['interests-raw'] || null, args['interests-json'] || null,
-        args['chat-id'] || null);
+        args['chat-id'] || null, args['user-name'] || null,
+        args['user-location'] || null, args['user-timezone'] || null);
     const profile = db.prepare('SELECT * FROM user_profile WHERE id = 1').get();
     console.log(JSON.stringify(profile));
   },
