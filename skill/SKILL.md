@@ -1,11 +1,13 @@
 ---
 name: wave
 description: >
-  Personal intelligence agent that monitors companies, industries, and topics
-  via Linkt.ai signals. Delivers relevant signals to Telegram with deep analysis,
-  pattern detection, and multi-agent debate. Use this skill when the user wants to
-  set up monitoring, receive signal notifications, refine their interests, get deep
-  dives on signals, or review their intelligence briefing.
+  Wave is your personal intelligence agent. It monitors companies, industries, and
+  topics via Linkt.ai signals and delivers relevant signals to Telegram with deep
+  analysis, pattern detection, and multi-agent debate. Use this skill when the user
+  says "wave", "set up wave", "use wave", "start wave", wants to set up monitoring,
+  receive signal notifications, refine their interests, get deep dives on signals,
+  check for new signals, or review their intelligence briefing.
+user-invocable: true
 metadata: {"openclaw":{"emoji":"📡","requires":{"bins":["node"]}}}
 ---
 
