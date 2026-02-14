@@ -172,7 +172,7 @@ Wave is that agent. It monitors everything, filters aggressively, investigates a
 
 **[@Building_Josh](https://twitter.com/Building_Josh)**
 
-Built at the ATIX Hackathon because competitive intelligence shouldn't require a Bloomberg terminal.
+Built at the AITX Hackathon because competitive intelligence shouldn't require a Bloomberg terminal.
 
 ## License
 
