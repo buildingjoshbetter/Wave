@@ -23,10 +23,9 @@ git clone https://github.com/buildingjoshbetter/wave.git wave
 cd wave/skill
 ```
 
-Or copy just the skill directory:
+Or clone directly into the skills directory:
 ```bash
-git clone https://github.com/buildingjoshbetter/wave.git /tmp/wave
-cp -r /tmp/wave/skill/ ~/.openclaw/skills/wave/
+git clone https://github.com/buildingjoshbetter/Wave.git ~/.openclaw/skills/wave
 cd ~/.openclaw/skills/wave
 ```
 

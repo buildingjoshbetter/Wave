@@ -49,14 +49,9 @@ clawhub install wave
 
 ### Manual Installation
 
-1. Clone this repo:
+1. Clone directly into OpenClaw's skills directory:
 ```bash
-git clone https://github.com/buildingjoshbetter/wave.git
-```
-
-2. Copy the skill into OpenClaw:
-```bash
-cp -r wave/skill ~/.openclaw/skills/wave
+git clone https://github.com/buildingjoshbetter/Wave.git ~/.openclaw/skills/wave
 cd ~/.openclaw/skills/wave && npm install
 ```
 
