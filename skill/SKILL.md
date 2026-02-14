@@ -85,6 +85,96 @@ When user asks "how's my accuracy" or "show stats":
 2. Display: total signals sent, thumbs up/down ratio, most/least relevant topics,
    signal types that consistently score high, suggested filter adjustments.
 
+### /radar-demo (Live Demo Mode)
+When user says "demo mode", "go into demo mode", "start demo", "show me a demo",
+or "/radar-demo":
+
+**IMPORTANT**: This is a self-guided demo walkthrough. You control ALL pacing.
+Do NOT rush between steps. Wait generously so a live audience can read and
+absorb each feature before you move on.
+
+Run the demo in this exact sequence:
+
+1. **Announce demo mode:**
+   Send to Telegram:
+   "<b>DEMO MODE ACTIVATED</b>
+
+   I'll walk you through Wave's core features using real signal data.
+   Sit back -- each capability will fire one by one."
+
+2. **Step 0 -- Reset environment:**
+   Run: `node {baseDir}/scripts/demo-mode.mjs --step 0`
+   This seeds background data for pattern detection. Do NOT send output to user.
+   Wait 5 seconds.
+
+3. **Step 1 -- Signal Notification (Chain Reaction):**
+   Run: `node {baseDir}/scripts/demo-mode.mjs --step 1`
+   Parse the JSON output. Process this signal through normal Signal Evaluation Logic:
+   - Score 0.82 >= 0.8 → forward immediately
+   - Format with <b>Cursor</b>, <i>product_launch</i>, score as percentage
+   - Add personalized context: Cursor going enterprise means competitive pressure
+     for anyone building dev tools. Regulated industries are opening up.
+   - Add inline buttons: [Tell Me More] [Not Relevant] [Save]
+   **Wait 20 seconds before proceeding.**
+
+4. **Step 2 -- Pattern Detection:**
+   Run: `node {baseDir}/scripts/demo-mode.mjs --step 2`
+   Parse the JSON output. The output includes a `pattern_hint` field.
+   - The signal itself scores 0.71 (investigate range), but the PATTERN is the story
+   - Read `pattern_hint`: it shows 4 signals about Anthropic in the past week
+   - Send the signal AND highlight the pattern:
+     "I've now seen 4 signals about <b>Anthropic</b> in the past week:
+     office lease + hiring surge + Oracle partnership + more infrastructure hiring
+     in Austin. <b>Pattern: major Austin expansion incoming.</b>"
+   - This is Wave connecting dots across days that a human would miss
+   **Wait 25 seconds before proceeding.**
+
+5. **Step 3 -- War Room:**
+   Run: `node {baseDir}/scripts/demo-mode.mjs --step 3`
+   Parse the JSON output. Score 0.95 >= 0.85 → trigger war room.
+   - First send the signal notification (OpenAI acquires Windsurf for $3B)
+   - Then follow the full /radar-warroom flow:
+     spawn three sub-agents (Analyst, Skeptic, Strategist), wait for responses,
+     synthesize consensus, format as war room debate summary
+   - This demonstrates multi-agent reasoning on high-impact signals
+   **Wait 45 seconds before proceeding** (war room sub-agents need time).
+
+6. **Step 4 -- Seed briefing data:**
+   Run: `node {baseDir}/scripts/demo-mode.mjs --step 4`
+   This silently injects additional signals for the briefing. Do NOT send any
+   Telegram message for this step. Just proceed.
+   Wait 5 seconds.
+
+7. **Step 5 -- Morning Briefing:**
+   Run: `node {baseDir}/scripts/demo-mode.mjs --step 5`
+   Then run: `node {baseDir}/scripts/briefing-builder.mjs --icp-id demo`
+   Parse the briefing JSON and format per /radar-briefing instructions:
+   - HIGH PRIORITY: Cursor Enterprise + OpenAI/Windsurf acquisition
+   - WORTH KNOWING: Mistral/SAP partnership, DeepMind hiring, Replit funding
+   - FILTERED OUT: count of low-relevance signals
+   - PATTERNS: Anthropic (4 signals across multiple types)
+   - Number each item. Tell user "Reply with a number for deep dive."
+
+8. **Wrap up:**
+   Send:
+   "<b>DEMO COMPLETE</b>
+
+   That was Wave -- real-time signal notifications, chain reaction analysis,
+   cross-signal pattern detection, multi-agent war room debate, and a
+   structured morning briefing. All running autonomously in a single
+   Telegram chat.
+
+   Type <b>set up wave</b> to configure your own profile, or ask me anything."
+
+**Demo mode notes:**
+- If any step fails, log the error, tell the user "Skipping [feature] due to a
+  hiccup", and continue to the next step. Do not abort the entire demo.
+- The demo uses ICP ID "demo" for all signals.
+- After demo completes, normal Wave functionality resumes immediately.
+- If user taps inline buttons during the demo, acknowledge briefly but do not
+  trigger deep dives -- let the demo flow continue uninterrupted.
+- The demo is fully re-runnable. Step 0 cleans up all previous demo data.
+
 ### /radar-briefing (Morning Briefing - also triggered by cron)
 1. Run: `node {baseDir}/scripts/briefing-builder.mjs --icp-id <id>`
 2. Parse the structured JSON output.
