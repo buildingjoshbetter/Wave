@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// linkt-client.mjs - Linkt.ai SDK wrapper for Signal Radar
+// linkt-client.mjs - Linkt.ai SDK wrapper for Wave
 // Usage: node linkt-client.mjs <command> [--flags]
 
 import Linkt from '@linkt/sdk';
@@ -15,7 +15,7 @@ const commands = {
   async 'create-icp'(args) {
     const data = JSON.parse(args.data);
     const response = await client.icp.create({
-      name: data.name || 'Signal Radar Profile',
+      name: data.name || 'Wave Profile',
       description: data.description,
       entity_targets: (data.companies || []).map(c => ({
         description: c,
@@ -40,8 +40,8 @@ const commands = {
       company_size_filters: args['sizes'] ? args['sizes'].split(',') : [],
     };
 
-    if (process.env.SIGNAL_RADAR_WEBHOOK_URL) {
-      taskConfig.webhook_url = process.env.SIGNAL_RADAR_WEBHOOK_URL;
+    if (process.env.WAVE_WEBHOOK_URL) {
+      taskConfig.webhook_url = process.env.WAVE_WEBHOOK_URL;
     }
 
     const response = await client.task.create({

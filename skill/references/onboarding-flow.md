@@ -7,7 +7,7 @@ The agent reads this during `/radar-setup` to guide the interaction.
 ## Step 1: Welcome
 When user sends `/start` or their first message, respond with:
 
-**Welcome to Signal Radar**
+**Welcome to Wave**
 
 I monitor companies, industries, and topics you care about -- then send
 you only what matters, with deep analysis and context.

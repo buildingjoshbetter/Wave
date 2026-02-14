@@ -44,7 +44,7 @@ You describe your world in plain English. Wave monitors it 24/7 via [Linkt.ai](h
 ### Install from ClawHub
 
 ```bash
-clawhub install signal-radar
+clawhub install wave
 ```
 
 ### Manual Installation
@@ -56,8 +56,8 @@ git clone https://github.com/buildingjoshbetter/wave.git
 
 2. Copy the skill into OpenClaw:
 ```bash
-cp -r wave/skill ~/.openclaw/skills/signal-radar
-cd ~/.openclaw/skills/signal-radar && npm install
+cp -r wave/skill ~/.openclaw/skills/wave
+cd ~/.openclaw/skills/wave && npm install
 ```
 
 3. Add your API key to `~/.openclaw/openclaw.json`:
@@ -65,7 +65,7 @@ cd ~/.openclaw/skills/signal-radar && npm install
 {
   "skills": {
     "entries": {
-      "signal-radar": {
+      "wave": {
         "enabled": true,
         "env": {
           "LINKT_API_KEY": "sk-your-linkt-api-key"
@@ -81,7 +81,7 @@ cd ~/.openclaw/skills/signal-radar && npm install
 openclaw gateway restart
 ```
 
-5. Open Telegram. Message your bot: "Set up my signal radar."
+5. Open Telegram. Message your bot: "Set up Wave."
 
 That's it. You're live.
 

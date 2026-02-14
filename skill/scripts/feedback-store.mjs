@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// feedback-store.mjs - SQLite operations for Signal Radar
+// feedback-store.mjs - SQLite operations for Wave
 // Commands: init, record, record-seen, check-relevance, stats, patterns
 
 import Database from 'better-sqlite3';
@@ -8,7 +8,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH = join(__dirname, '..', 'data', 'signal-radar.db');
+const DB_PATH = join(__dirname, '..', 'data', 'wave.db');
 
 mkdirSync(dirname(DB_PATH), { recursive: true });
 const db = new Database(DB_PATH);

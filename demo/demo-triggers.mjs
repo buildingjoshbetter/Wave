@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 
 /**
- * Signal Radar Demo Trigger Script
+ * Wave Demo Trigger Script
  *
  * Runs on Josh's laptop (not projected).
  * Hotkeys inject pre-cached signals into the same pipeline
@@ -20,7 +20,7 @@ import readline from 'readline';
 
 // CONFIG -- update these before demo day
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH = process.env.DB_PATH || `${process.env.HOME}/.openclaw/skills/signal-radar/data/signal-radar.db`;
+const DB_PATH = process.env.DB_PATH || `${process.env.HOME}/.openclaw/skills/wave/data/wave.db`;
 
 // Load cached signals
 const CACHE_DIR = join(__dirname, 'demo-cache');
@@ -65,7 +65,7 @@ async function injectSignal(key, delayMs) {
     // Briefing is special: prompt agent to run /radar-briefing flow
     // (don't inject a signal -- the briefing aggregates existing signals from SQLite)
     if (key === 'briefing') {
-      execSync(`openclaw message send --channel internal --target signal-radar \
+      execSync(`openclaw message send --channel internal --target wave \
         --message 'Generate morning briefing per /radar-briefing instructions. ICP ID: demo.'`);
       console.log(`[OK] ${key} -- agent prompted to generate briefing`);
       lastKey = key;
@@ -91,7 +91,7 @@ async function injectSignal(key, delayMs) {
     db.close();
 
     // 2. Prompt the agent to process the new signal
-    execSync(`openclaw message send --channel internal --target signal-radar \
+    execSync(`openclaw message send --channel internal --target wave \
       --message 'New signal detected: ${payload.id}. Process it per skill instructions and send to user.'`);
 
     console.log(`[OK] ${key} injected into DB + agent prompted`);
@@ -106,7 +106,7 @@ async function injectSignal(key, delayMs) {
 readline.emitKeypresses(process.stdin);
 if (process.stdin.isTTY) process.stdin.setRawMode(true);
 
-console.log('\n=== SIGNAL RADAR DEMO TRIGGERS ===');
+console.log('\n=== WAVE DEMO TRIGGERS ===');
 console.log('1 = Chain Reaction');
 console.log('2 = Pattern Detection');
 console.log('3 = War Room');

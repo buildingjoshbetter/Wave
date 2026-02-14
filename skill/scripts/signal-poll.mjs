@@ -8,7 +8,7 @@ import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH = join(__dirname, '..', 'data', 'signal-radar.db');
+const DB_PATH = join(__dirname, '..', 'data', 'wave.db');
 const LINKT_CLIENT = join(__dirname, 'linkt-client.mjs');
 
 const args = {};

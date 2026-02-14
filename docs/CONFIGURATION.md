@@ -5,7 +5,7 @@
 | Variable | Required | Description |
 |----------|----------|-------------|
 | `LINKT_API_KEY` | Yes | Your Linkt.ai API key (starts with `sk-`) |
-| `SIGNAL_RADAR_WEBHOOK_URL` | No | Webhook URL for future real-time delivery |
+| `WAVE_WEBHOOK_URL` | No | Webhook URL for future real-time delivery |
 
 ## OpenClaw Config (`openclaw.json`)
 
@@ -13,7 +13,7 @@
 {
   "skills": {
     "entries": {
-      "signal-radar": {
+      "wave": {
         "enabled": true,
         "env": {
           "LINKT_API_KEY": "sk-your-key"
@@ -48,7 +48,7 @@ Thresholds adjust automatically based on user feedback.
 
 ## SQLite Database
 
-Location: `~/.openclaw/skills/signal-radar/data/signal-radar.db`
+Location: `~/.openclaw/skills/wave/data/wave.db`
 
 Tables:
 - `signals_seen` -- All received signals with dedup

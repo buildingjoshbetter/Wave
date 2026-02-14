@@ -1,7 +1,7 @@
 {
-  "name": "signal-radar",
+  "name": "wave",
   "version": "1.0.0",
-  "description": "Signal Radar - Personal intelligence agent for OpenClaw",
+  "description": "Wave - Personal intelligence agent for OpenClaw",
   "type": "module",
   "private": true,
   "dependencies": {

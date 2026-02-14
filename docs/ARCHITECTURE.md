@@ -9,7 +9,7 @@ User (Telegram)
 OpenClaw Gateway
       |
       v
-Signal Radar Skill (SKILL.md)
+Wave Skill (SKILL.md)
       |
       +---> Linkt.ai SDK (signal monitoring)
       |
@@ -57,7 +57,7 @@ Signal Radar Skill (SKILL.md)
 
 ## Storage
 
-All persistent data lives in SQLite (`data/signal-radar.db`):
+All persistent data lives in SQLite (`data/wave.db`):
 - WAL mode for concurrent read/write safety
 - `busy_timeout = 5000` prevents lock contention
 - Single-row `user_profile` table (v1 is single-user)

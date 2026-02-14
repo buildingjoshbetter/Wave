@@ -1,4 +1,4 @@
--- Signal Radar Demo Seed Data
+-- Wave Demo Seed Data
 -- Run against the skill's SQLite DB before demo
 -- These represent signals that "arrived" over the past 10 days
 

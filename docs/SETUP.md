@@ -19,15 +19,15 @@
 
 ```bash
 cd ~/.openclaw/skills/
-git clone https://github.com/buildingjoshbetter/wave.git signal-radar
-cd signal-radar/skill
+git clone https://github.com/buildingjoshbetter/wave.git wave
+cd wave/skill
 ```
 
 Or copy just the skill directory:
 ```bash
 git clone https://github.com/buildingjoshbetter/wave.git /tmp/wave
-cp -r /tmp/wave/skill/ ~/.openclaw/skills/signal-radar/
-cd ~/.openclaw/skills/signal-radar
+cp -r /tmp/wave/skill/ ~/.openclaw/skills/wave/
+cd ~/.openclaw/skills/wave
 ```
 
 ### 2. Install Dependencies
@@ -59,7 +59,7 @@ Add to OpenClaw config (`~/.openclaw/openclaw.json`):
 {
   "skills": {
     "entries": {
-      "signal-radar": {
+      "wave": {
         "enabled": true,
         "env": {
           "LINKT_API_KEY": "sk-your-linkt-api-key"
@@ -85,21 +85,21 @@ openclaw gateway restart
 
 ```bash
 # Check skill is loaded
-openclaw logs --follow | grep -i "signal-radar"
+openclaw logs --follow | grep -i "wave"
 
 # Initialize database
-cd ~/.openclaw/skills/signal-radar
+cd ~/.openclaw/skills/wave
 node scripts/feedback-store.mjs init
 
 # Verify tables
-sqlite3 data/signal-radar.db ".tables"
+sqlite3 data/wave.db ".tables"
 # Should show: feedback  signal_patterns  signals_seen  user_profile
 ```
 
 ### 6. Start Using
 
 Open Telegram, message your bot:
-> "Set up my signal radar"
+> "Set up Wave"
 
 The bot will guide you through onboarding.
 
@@ -114,7 +114,7 @@ openclaw cron add \
   --cron "*/30 * * * *" \
   --tz "America/Chicago" \
   --session isolated \
-  --message "Run signal polling per Signal Radar skill instructions." \
+  --message "Run signal polling per Wave skill instructions." \
   --announce --channel telegram --to "<CHAT_ID>"
 
 # Morning briefing at 8am
@@ -123,7 +123,7 @@ openclaw cron add \
   --cron "0 8 * * *" \
   --tz "America/Chicago" \
   --session isolated \
-  --message "Generate morning briefing per Signal Radar skill instructions." \
+  --message "Generate morning briefing per Wave skill instructions." \
   --announce --channel telegram --to "<CHAT_ID>"
 ```
 
