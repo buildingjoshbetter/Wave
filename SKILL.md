@@ -382,7 +382,7 @@ buttons: [[{"text":"1","callback_data":"brief_dive_1_<signal_id>"},{"text":"2","
 
 **Signal notification format:**
 Send via message tool with action=send. Message text:
-**Cursor** — *product launch* — 82%
+**Cursor** — *product launch* — 82% relevance
 Summary text here explaining what happened and why it matters to the user.
 
 Then include buttons parameter with Tell Me More / Not Relevant / Save buttons.
@@ -392,10 +392,10 @@ Then reply: NO_REPLY
 **Wave Briefing** — Mon Feb 17, 2026
 
 **High Priority**
-1. **Cursor** — product launch — 82%
+1. **Cursor** — product launch — 82% relevance
 Summary in 1-2 lines.
 
-2. **OpenAI** — acquisition — 95%
+2. **OpenAI** — acquisition — 95% relevance
 Summary in 1-2 lines.
 
 **Worth Knowing**
