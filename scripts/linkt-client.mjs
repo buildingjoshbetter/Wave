@@ -124,6 +124,37 @@ const commands = {
     console.log(JSON.stringify(response));
   },
 
+  // ── ICP Retrieval ────────────────────────────────────────────────
+  async 'get-icp'(args) {
+    const response = await client.icp.retrieve(args['icp-id']);
+    console.log(JSON.stringify(response));
+  },
+
+  // ── ICP Listing ─────────────────────────────────────────────────
+  async 'list-icps'(args) {
+    const response = await client.icp.list({
+      page: parseInt(args['page'] || '1'),
+      page_size: parseInt(args['page-size'] || '20'),
+    });
+    console.log(JSON.stringify(response));
+  },
+
+  // ── Task Retrieval ──────────────────────────────────────────────
+  async 'get-task'(args) {
+    const response = await client.task.retrieve(args['task-id']);
+    console.log(JSON.stringify(response));
+  },
+
+  // ── Schedule Listing ────────────────────────────────────────────
+  async 'list-schedules'(args) {
+    const response = await client.schedule.list({
+      icp_id: args['icp-id'],
+      page: parseInt(args['page'] || '1'),
+      page_size: parseInt(args['page-size'] || '20'),
+    });
+    console.log(JSON.stringify(response));
+  },
+
   // ── Schedule Creation ─────────────────────────────────────────────
   async 'create-schedule'(args) {
     const frequency = args['frequency'] || 'daily';

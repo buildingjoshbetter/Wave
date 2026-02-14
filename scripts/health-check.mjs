@@ -157,8 +157,9 @@ function checkIcpValid(icpId) {
     return true;
   } catch (err) {
     const msg = err.stderr?.toString() || err.message || '';
-    if (msg.includes('404') || msg.includes('NotFoundError') || msg.includes('not found')) {
-      addCheck('icp_valid', 'fail', `ICP ${icpId} not found (404) -- deleted`, {
+    if (msg.includes('404') || msg.includes('NotFoundError') || msg.includes('not found')
+        || msg.includes('400') || msg.includes('Invalid ICP ID') || msg.includes('BadRequestError')) {
+      addCheck('icp_valid', 'fail', `ICP ${icpId} is invalid or deleted`, {
         resolution: 'Will attempt auto-repair by finding a valid ICP'
       });
       return false;
@@ -205,7 +206,7 @@ function repairIcp() {
             // Found one with signals — use this instead
             const db = new Database(DB_PATH);
             db.pragma('journal_mode = WAL');
-            db.prepare('UPDATE user_profile SET icp_id = ?, updated_at = datetime("now") WHERE id = 1').run(icp.id);
+            db.prepare(`UPDATE user_profile SET icp_id = ?, updated_at = datetime('now') WHERE id = 1`).run(icp.id);
             db.close();
             addRepair('icp', 'update_profile', true, `Switched to ICP ${icp.id} ("${icp.name}") which has signals`);
             return icp.id;
@@ -217,7 +218,7 @@ function repairIcp() {
     // Update profile with the best ICP we found
     const db = new Database(DB_PATH);
     db.pragma('journal_mode = WAL');
-    db.prepare('UPDATE user_profile SET icp_id = ?, updated_at = datetime("now") WHERE id = 1').run(newIcpId);
+    db.prepare(`UPDATE user_profile SET icp_id = ?, updated_at = datetime('now') WHERE id = 1`).run(newIcpId);
     db.close();
     addRepair('icp', 'update_profile', true, `Updated profile to ICP ${newIcpId} ("${newIcp.name}")`);
     return newIcpId;
@@ -244,8 +245,8 @@ function checkTaskValid(taskId) {
     return true;
   } catch (err) {
     const msg = err.stderr?.toString() || err.message || '';
-    if (msg.includes('404')) {
-      addCheck('task_valid', 'fail', `Task ${taskId} not found (404)`);
+    if (msg.includes('404') || msg.includes('400') || msg.includes('Invalid') || msg.includes('BadRequestError')) {
+      addCheck('task_valid', 'fail', `Task ${taskId} is invalid or not found`);
       return false;
     }
     addCheck('task_valid', 'warn', `Cannot validate task: ${msg.slice(0, 150)}`);
@@ -277,16 +278,24 @@ const hasKey = checkApiKey();
 const { exists: dbExists, profile } = checkDatabase();
 
 if (hasKey && dbExists && profile && profile.icp_id) {
-  let icpValid = checkIcpValid(profile.icp_id);
+  let activeIcpId = profile.icp_id;
+  let icpValid = checkIcpValid(activeIcpId);
 
   if (!icpValid) {
     const newId = repairIcp();
-    if (newId) icpValid = checkIcpValid(newId);
+    if (newId) {
+      activeIcpId = newId;
+      icpValid = checkIcpValid(newId);
+      // If repair succeeded, downgrade overall from 'broken' to 'degraded'
+      if (icpValid && results.overall === 'broken') {
+        results.overall = 'degraded';
+      }
+    }
   }
 
   if (icpValid) {
     checkTaskValid(profile.task_id);
-    checkSignals(profile.icp_id);
+    checkSignals(activeIcpId);
   }
 }
 
