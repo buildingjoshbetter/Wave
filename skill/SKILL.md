@@ -6,7 +6,7 @@ description: >
   pattern detection, and multi-agent debate. Use this skill when the user wants to
   set up monitoring, receive signal notifications, refine their interests, get deep
   dives on signals, or review their intelligence briefing.
-metadata: {"openclaw":{"emoji":"📡","requires":{"env":["LINKT_API_KEY"],"bins":["node"]}}}
+metadata: {"openclaw":{"emoji":"📡","requires":{"bins":["node"]}}}
 ---
 
 # Signal Radar - Intelligence Agent
