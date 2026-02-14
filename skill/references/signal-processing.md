@@ -39,8 +39,8 @@ Produce a 500-800 word analysis covering:
 - **RECOMMENDED ACTION**: One specific next step
 
 ## Formatting
-- Use HTML tags for Telegram: `<b>`, `<i>`, `<a>`
-- Always HTML-escape signal text with `escapeHtml()` before embedding
+- Use Markdown for Telegram: **bold**, *italic*, [links](url)
+- Do NOT use HTML tags (<b>, <i>, <a>) — they render as raw text in OpenClaw
 - Include source links at the bottom
 - Add buttons: [ Save this ] [ Rate 1-10 ]
 

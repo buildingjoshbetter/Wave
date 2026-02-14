@@ -56,16 +56,16 @@ After receiving responses from sub-agents, synthesize:
 3. FINAL VERDICT: Synthesized relevance score (0-100%) and recommendation
 4. BOTTOM LINE: One sentence -- should the user care? Yes/No and why.
 
-Format for Telegram:
-<b>War Room: {headline}</b>
+Format for Telegram (use Markdown, not HTML):
+**War Room: {headline}**
 
-<b>Analyst:</b> [2-3 sentence summary]
-<b>Skeptic:</b> [2-3 sentence summary]
-<b>Strategist:</b> [2-3 sentence summary]
+**Analyst:** [2-3 sentence summary]
+**Skeptic:** [2-3 sentence summary]
+**Strategist:** [2-3 sentence summary]
 
-<b>Consensus:</b> [synthesis]
-<b>Final Score:</b> [X%] - [CRITICAL / IMPORTANT / NOTABLE / NOISE]
-<b>Bottom Line:</b> [action recommendation]
+**Consensus:** [synthesis]
+**Final Score:** [X%] - [CRITICAL / IMPORTANT / NOTABLE / NOISE]
+**Bottom Line:** [action recommendation]
 
 ## Timeout Handling
 - Per-agent timeout: 45 seconds

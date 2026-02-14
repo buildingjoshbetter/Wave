@@ -11,12 +11,30 @@ const DB_PATH = join(__dirname, '..', 'data', 'wave.db');
 const db = new Database(DB_PATH, { readonly: true });
 
 const icpIdIdx = process.argv.indexOf('--icp-id');
-const icpId = process.argv.find(a => a.startsWith('--icp-id='))?.split('=')[1]
+let icpId = process.argv.find(a => a.startsWith('--icp-id='))?.split('=')[1]
   || (icpIdIdx !== -1 ? process.argv[icpIdIdx + 1] : undefined);
 
 if (!icpId) {
-  console.error(JSON.stringify({ error: 'Missing --icp-id' }));
-  process.exit(1);
+  // Auto-resolve from SQLite user_profile
+  try {
+    const profile = db.prepare('SELECT icp_id FROM user_profile WHERE id = 1').get();
+    if (profile && profile.icp_id) {
+      icpId = profile.icp_id;
+    } else {
+      console.error(JSON.stringify({
+        error: 'no_icp_id',
+        message: 'No --icp-id provided and no profile found in SQLite. Run onboarding first.',
+        resolution: 'Tell the user to run: set up wave'
+      }));
+      process.exit(1);
+    }
+  } catch (err) {
+    console.error(JSON.stringify({
+      error: 'profile_read_failed',
+      message: `Could not read user profile: ${err.message}`
+    }));
+    process.exit(1);
+  }
 }
 
 const since = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();

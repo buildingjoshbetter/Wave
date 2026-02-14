@@ -3,12 +3,14 @@
 // Usage: node signal-poll.mjs --icp-id <id> --since <duration>
 
 import { execFileSync } from 'child_process';
+import { mkdirSync } from 'fs';
 import Database from 'better-sqlite3';
 import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DB_PATH = join(__dirname, '..', 'data', 'wave.db');
+mkdirSync(dirname(DB_PATH), { recursive: true });
 const LINKT_CLIENT = join(__dirname, 'linkt-client.mjs');
 
 const args = {};
@@ -22,12 +24,33 @@ for (let i = 0; i < rawArgs.length; i++) {
   }
 }
 
-const icpId = args['icp-id'];
-const since = args['since'] || '30m';
+let icpId = args['icp-id'];
+const since = args['since'] || '1d';
 
 if (!icpId) {
-  console.error(JSON.stringify({ error: 'Missing --icp-id' }));
-  process.exit(1);
+  // Auto-resolve from SQLite user_profile
+  try {
+    const profileDb = new Database(DB_PATH, { readonly: true });
+    const profile = profileDb.prepare('SELECT icp_id FROM user_profile WHERE id = 1').get();
+    profileDb.close();
+    if (profile && profile.icp_id) {
+      icpId = profile.icp_id;
+    } else {
+      console.error(JSON.stringify({
+        error: 'no_icp_id',
+        message: 'No --icp-id provided and no profile found in SQLite. Run onboarding first.',
+        resolution: 'Tell the user to run: set up wave'
+      }));
+      process.exit(1);
+    }
+  } catch (err) {
+    console.error(JSON.stringify({
+      error: 'profile_read_failed',
+      message: `Could not read user profile: ${err.message}`,
+      resolution: 'Check that wave.db exists and is not corrupted'
+    }));
+    process.exit(1);
+  }
 }
 
 // 1. Fetch signals from Linkt
