@@ -42,7 +42,7 @@ Produce a 500-800 word analysis covering:
 - Use Markdown for Telegram: **bold**, *italic*, [links](url)
 - Do NOT use HTML tags (<b>, <i>, <a>) — they render as raw text in OpenClaw
 - Include source links at the bottom
-- Add buttons: [ Save this ] [ Rate 1-10 ]
+- Send via message tool with inline buttons (Save this / Rate 1-10) using the `buttons` parameter. Do NOT include button text in the message body. Reply NO_REPLY after sending.
 
 ## Failure Handling
 - If browser returns error or shows login/paywall: note the limitation,

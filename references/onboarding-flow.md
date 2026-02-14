@@ -87,9 +87,12 @@ From everything collected, build and show the profile:
 
 Does this look right?
 
-[ Looks good ] [ Edit ]
+Send this message using the message tool with action=send and include inline buttons:
+```json
+buttons: [[{"text":"Looks good","callback_data":"onboard_confirm"},{"text":"Edit","callback_data":"onboard_edit"}]]
+```
+Then reply with ONLY `NO_REPLY` to avoid a duplicate plain-text message.
 
-Use inline buttons with callback_data:
 - `onboard_confirm` → proceed to Step 6
 - `onboard_edit` → ask "What do you want to change?" and loop back
 

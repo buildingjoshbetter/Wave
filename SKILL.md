@@ -77,7 +77,10 @@ When user asks "what's new" or "any signals":
    (Script auto-reads ICP from SQLite — do NOT pass --icp-id unless the user explicitly provides one.)
 2. Parse the JSON output (array of new signals).
 3. For each signal, evaluate relevance against user profile in session memory.
-4. Format and send via Telegram with inline buttons: [Tell Me More] [Not Relevant] [Save]
+4. For each signal, send via the message tool with action=send. Include the signal summary
+   as message text and attach inline buttons (Tell Me More / Not Relevant / Save) using the
+   `buttons` parameter. See "Inline Buttons" section for the exact JSON format.
+   After sending, reply with NO_REPLY.
 
 ### /radar-dive (Deep Dive)
 When user clicks "Tell Me More" or asks for details on a signal:
@@ -148,7 +151,8 @@ Run the demo in this exact sequence:
    - Format with **Cursor**, *product_launch*, score as percentage
    - Add personalized context: Cursor going enterprise means competitive pressure
      for anyone building dev tools. Regulated industries are opening up.
-   - Add inline buttons: [Tell Me More] [Not Relevant] [Save]
+   - Send via message tool with inline buttons (Tell Me More / Not Relevant / Save).
+     See "Inline Buttons" section for exact JSON. Reply NO_REPLY after sending.
    **Wait 20 seconds before proceeding.**
 
 4. **Step 2 -- Pattern Detection:**
@@ -265,6 +269,42 @@ Parse callback_data prefixes to determine the action:
 
 Parse logic: split on `_`, check prefix, extract signal ID from suffix.
 
+## Inline Buttons
+
+CRITICAL: Inline buttons must be sent using the message tool with the `buttons` parameter.
+Do NOT include button text like [Tell Me More] in your reply — that renders as plain text.
+After sending a message with buttons via the message tool, reply with ONLY `NO_REPLY` to
+avoid sending a duplicate plain-text message.
+
+The `buttons` parameter is a JSON array of arrays (rows of buttons). Each button has:
+- `text`: display label the user sees
+- `callback_data`: value sent back when tapped
+
+**Signal notification buttons:**
+```json
+buttons: [[{"text":"Tell Me More","callback_data":"dive_<signal_id>"},{"text":"Not Relevant","callback_data":"fb_irr_<signal_id>"},{"text":"Save","callback_data":"save_<signal_id>"}]]
+```
+
+**Onboarding confirmation buttons:**
+```json
+buttons: [[{"text":"Looks good","callback_data":"onboard_confirm"},{"text":"Edit","callback_data":"onboard_edit"}]]
+```
+
+**Deep dive buttons:**
+```json
+buttons: [[{"text":"Save this","callback_data":"save_<signal_id>"},{"text":"Rate 1-10","callback_data":"rate_<signal_id>"}]]
+```
+
+**War room retry button:**
+```json
+buttons: [[{"text":"Run again","callback_data":"war_retry_<signal_id>"}]]
+```
+
+**Briefing deep dive buttons** (one button per high-priority item):
+```json
+buttons: [[{"text":"1","callback_data":"brief_dive_1_<signal_id>"},{"text":"2","callback_data":"brief_dive_2_<signal_id>"},{"text":"3","callback_data":"brief_dive_3_<signal_id>"}]]
+```
+
 ## Formatting Rules
 
 **General:**
@@ -276,11 +316,16 @@ Parse logic: split on `_`, check prefix, extract signal ID from suffix.
 - NO section headers with emojis (no 🔴 HIGH PRIORITY, no 🟡 WORTH KNOWING).
   Just use bold text for section names.
 - Do not wrap signal summaries in code blocks. Just write the text normally.
+- NEVER include button text like [Tell Me More] in message text. Use the message tool
+  with the `buttons` parameter instead. See "Inline Buttons" section above.
 
 **Signal notification format:**
+Send via message tool with action=send. Message text:
 **Cursor** — *product launch* — 82%
 Summary text here explaining what happened and why it matters to the user.
-[Tell Me More] [Not Relevant] [Save]
+
+Then include buttons parameter with Tell Me More / Not Relevant / Save buttons.
+Then reply: NO_REPLY
 
 **Briefing format:**
 **Wave Briefing** — Mon Feb 17, 2026
