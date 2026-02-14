@@ -1,0 +1,24 @@
+# Dependencies
+node_modules/
+package-lock.json
+
+# Data
+*.db
+*.db-wal
+*.db-shm
+skill/data/
+
+# Environment
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+
+# Demo cache (don't ship demo data in production)
+demo/demo-cache/
