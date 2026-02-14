@@ -1,0 +1,12 @@
+{
+  "id": "sig_demo_pattern_001",
+  "icp_id": "demo",
+  "signal_type": "hiring_surge",
+  "score": 0.71,
+  "strength": "medium",
+  "summary": "Anthropic posts 15 new infrastructure engineer roles in Austin, TX. Focus areas include distributed systems, GPU cluster management, and data center operations.",
+  "entity_ids": ["ent_anthropic"],
+  "entity_names": ["Anthropic"],
+  "references": ["https://anthropic.com/careers"],
+  "created_at": "2026-02-14T11:00:00Z"
+}

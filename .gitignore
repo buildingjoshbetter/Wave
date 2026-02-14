@@ -20,5 +20,5 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Demo cache (don't ship demo data in production)
-demo/demo-cache/
+# Demo cache (uncomment for production)
+# demo/demo-cache/

@@ -1,0 +1,61 @@
+{
+  "id": "sig_demo_briefing_001",
+  "icp_id": "demo",
+  "signal_type": "briefing",
+  "score": 1.0,
+  "strength": "high",
+  "summary": "Morning intelligence briefing triggered",
+  "entity_ids": [],
+  "entity_names": [],
+  "references": [],
+  "created_at": "2026-02-14T08:00:00Z",
+  "briefing_data": {
+    "high_priority": [
+      {
+        "id": "sig_demo_chain_001",
+        "type": "product_launch",
+        "summary": "Cursor announces Enterprise tier with SOC2 compliance",
+        "score": 0.82,
+        "entities": ["Cursor"]
+      },
+      {
+        "id": "sig_demo_warroom_001",
+        "type": "acquisition",
+        "summary": "OpenAI acquires Windsurf (Codeium) for $3B",
+        "score": 0.95,
+        "entities": ["OpenAI", "Windsurf"]
+      }
+    ],
+    "worth_knowing": [
+      {
+        "id": "sig_wk_001",
+        "type": "partnership",
+        "summary": "Mistral partners with SAP for enterprise AI integration",
+        "score": 0.71,
+        "entities": ["Mistral", "SAP"]
+      },
+      {
+        "id": "sig_wk_002",
+        "type": "hiring_surge",
+        "summary": "Google DeepMind posts 30+ research roles across US offices",
+        "score": 0.65,
+        "entities": ["Google DeepMind"]
+      },
+      {
+        "id": "sig_wk_003",
+        "type": "funding",
+        "summary": "Replit raises $50M extension at $1.5B valuation",
+        "score": 0.62,
+        "entities": ["Replit"]
+      }
+    ],
+    "filtered_out": 8,
+    "patterns": [
+      {
+        "entity": "Anthropic",
+        "count": 4,
+        "types": ["expansion", "hiring_surge", "partnership", "hiring_surge"]
+      }
+    ]
+  }
+}

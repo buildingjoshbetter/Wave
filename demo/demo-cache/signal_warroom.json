@@ -1,0 +1,12 @@
+{
+  "id": "sig_demo_warroom_001",
+  "icp_id": "demo",
+  "signal_type": "acquisition",
+  "score": 0.95,
+  "strength": "high",
+  "summary": "OpenAI acquires Windsurf (Codeium) for $3B, signaling aggressive move into developer tools market. Deal includes Windsurf's 15M user base and enterprise code completion platform.",
+  "entity_ids": ["ent_openai", "ent_windsurf"],
+  "entity_names": ["OpenAI", "Windsurf"],
+  "references": ["https://bloomberg.com/news/openai-windsurf-acquisition"],
+  "created_at": "2026-02-14T12:00:00Z"
+}

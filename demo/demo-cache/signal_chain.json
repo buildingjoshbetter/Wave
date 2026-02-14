@@ -1,0 +1,12 @@
+{
+  "id": "sig_demo_chain_001",
+  "icp_id": "demo",
+  "signal_type": "product_launch",
+  "score": 0.82,
+  "strength": "high",
+  "summary": "Cursor announces Cursor for Enterprise with SOC2 compliance, SSO, and private cloud deployment options. Targets regulated industries including fintech and healthcare.",
+  "entity_ids": ["ent_cursor"],
+  "entity_names": ["Cursor"],
+  "references": ["https://cursor.com/blog/enterprise"],
+  "created_at": "2026-02-14T10:00:00Z"
+}
