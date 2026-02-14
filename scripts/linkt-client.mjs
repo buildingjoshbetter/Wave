@@ -53,7 +53,20 @@ const commands = {
       task_config: taskConfig,
     });
 
-    const execResponse = await client.task.execute(response.id);
+    let execResponse;
+    try {
+      execResponse = await client.task.execute(response.id, {
+        icp_id: args['icp-id'],
+      });
+    } catch (execErr) {
+      // Task was created but execution failed — still return the task_id
+      console.log(JSON.stringify({
+        task_id: response.id,
+        execution_error: execErr.message,
+        status: 'task_created_execution_pending',
+      }));
+      return;
+    }
 
     console.log(JSON.stringify({
       task_id: response.id,
@@ -113,9 +126,22 @@ const commands = {
 
   // ── Schedule Creation ─────────────────────────────────────────────
   async 'create-schedule'(args) {
+    const frequency = args['frequency'] || 'daily';
+    const cronMap = {
+      'daily': '0 8 * * *',
+      'twice-daily': '0 8,20 * * *',
+      'weekly': '0 8 * * 1',
+      'hourly': '0 * * * *',
+      'every-30m': '*/30 * * * *',
+    };
+    const cronExpr = args['cron'] || cronMap[frequency] || '0 8 * * *';
+
     const response = await client.schedule.create({
+      name: args['name'] || 'Wave Signal Monitor Schedule',
       task_id: args['task-id'],
-      frequency: args['frequency'] || 'daily',
+      icp_id: args['icp-id'],
+      frequency,
+      cron_expression: cronExpr,
     });
     console.log(JSON.stringify({ schedule_id: response.id }));
   },
@@ -158,9 +184,18 @@ const args = {};
 for (let i = 0; i < rawArgs.length; i++) {
   if (rawArgs[i].startsWith('--')) {
     const key = rawArgs[i].slice(2);
-    const val = rawArgs[i + 1] && !rawArgs[i + 1].startsWith('--') ? rawArgs[i + 1] : 'true';
-    args[key] = val;
-    if (val !== 'true') i++;
+    // Check if next token exists and is not a flag
+    if (i + 1 < rawArgs.length && !rawArgs[i + 1].startsWith('--')) {
+      // Collect all tokens until the next --flag (handles long strings with spaces)
+      const parts = [];
+      while (i + 1 < rawArgs.length && !rawArgs[i + 1].startsWith('--')) {
+        i++;
+        parts.push(rawArgs[i]);
+      }
+      args[key] = parts.join(' ');
+    } else {
+      args[key] = 'true';
+    }
   }
 }
 
