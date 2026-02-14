@@ -59,15 +59,6 @@ CREATE TABLE IF NOT EXISTS signal_patterns (
 
 db.exec(SCHEMA);
 
-// ── Shared Utility ───────────────────────────────────────────────
-export function escapeHtml(text) {
-  if (!text) return '';
-  return text
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;');
-}
-
 // ── Commands ─────────────────────────────────────────────────────
 const commands = {
   init() {
@@ -111,6 +102,8 @@ const commands = {
     let relevance = total === 0 ? 0.5 : pos / total;
 
     if (entity) {
+      // NOTE: LIKE on JSON strings works by accident (e.g. %Anthropic% matches '["Anthropic"]')
+      // but could false-match substrings. Acceptable for now given typical entity names.
       const eStats = db.prepare(
         `SELECT feedback_type, COUNT(*) as c FROM feedback WHERE entity_names LIKE ? GROUP BY feedback_type`
       ).all(`%${entity}%`);
@@ -162,16 +155,35 @@ const commands = {
   },
 
   patterns() {
-    const patterns = db.prepare(`
-      SELECT entity_names, COUNT(*) as count, GROUP_CONCAT(DISTINCT signal_type) as types,
-        GROUP_CONCAT(signal_id) as ids, MIN(created_at) as first, MAX(created_at) as last
+    // Query all signals from last 7 days, then group by individual entity in JS
+    // (SQLite lacks native JSON array unnesting)
+    const rows = db.prepare(`
+      SELECT signal_id, entity_names, signal_type, created_at
       FROM signals_seen WHERE received_at >= datetime('now', '-7 days')
-      GROUP BY entity_names HAVING count >= 2 ORDER BY count DESC
     `).all();
-    console.log(JSON.stringify(patterns.map(p => ({
-      entity: p.entity_names, count: p.count, types: p.types.split(','),
-      signal_ids: p.ids.split(','), first_at: p.first, last_at: p.last,
-    }))));
+
+    const entityMap = {};
+    for (const row of rows) {
+      let names;
+      try { names = JSON.parse(row.entity_names || '[]'); } catch { names = []; }
+      for (const name of names) {
+        if (!entityMap[name]) entityMap[name] = { types: new Set(), ids: [], first: row.created_at, last: row.created_at };
+        const e = entityMap[name];
+        e.types.add(row.signal_type);
+        e.ids.push(row.signal_id);
+        if (row.created_at < e.first) e.first = row.created_at;
+        if (row.created_at > e.last) e.last = row.created_at;
+      }
+    }
+
+    const patterns = Object.entries(entityMap)
+      .filter(([, v]) => v.ids.length >= 2)
+      .sort((a, b) => b[1].ids.length - a[1].ids.length)
+      .map(([entity, v]) => ({
+        entity, count: v.ids.length, types: [...v.types],
+        signal_ids: v.ids, first_at: v.first, last_at: v.last,
+      }));
+    console.log(JSON.stringify(patterns));
   },
 };
 

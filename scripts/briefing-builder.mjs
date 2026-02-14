@@ -55,16 +55,27 @@ const worth = signals.filter(s => {
 const filtered = signals.filter(s => (s.our_score || s.linkt_score) < 0.5);
 
 // Detect patterns (2+ signals about same entity in 7 days)
-const patterns = db.prepare(`
-  SELECT entity_names, COUNT(*) as count,
-    GROUP_CONCAT(DISTINCT signal_type) as types,
-    GROUP_CONCAT(signal_id) as signal_ids
+// Group by individual entity in JS since SQLite lacks JSON array unnesting
+const patternRows = db.prepare(`
+  SELECT signal_id, entity_names, signal_type
   FROM signals_seen
   WHERE icp_id = ? AND received_at >= datetime('now', '-7 days')
-  GROUP BY entity_names
-  HAVING count >= 2
-  ORDER BY count DESC
 `).all(icpId);
+
+const entityMap = {};
+for (const row of patternRows) {
+  let names;
+  try { names = JSON.parse(row.entity_names || '[]'); } catch { names = []; }
+  for (const name of names) {
+    if (!entityMap[name]) entityMap[name] = { types: new Set(), count: 0 };
+    entityMap[name].types.add(row.signal_type);
+    entityMap[name].count++;
+  }
+}
+const patterns = Object.entries(entityMap)
+  .filter(([, v]) => v.count >= 2)
+  .sort((a, b) => b[1].count - a[1].count)
+  .map(([entity, v]) => ({ entity, count: v.count, types: [...v.types] }));
 
 console.log(JSON.stringify({
   date: new Date().toISOString().split('T')[0],
@@ -81,7 +92,5 @@ console.log(JSON.stringify({
   filtered_sample: filtered.slice(0, 5).map(s => ({
     type: s.signal_type, summary: (s.summary || '').slice(0, 80),
   })),
-  patterns: patterns.map(p => ({
-    entity: p.entity_names, count: p.count, types: p.types.split(','),
-  })),
+  patterns,
 }));

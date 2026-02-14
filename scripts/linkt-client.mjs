@@ -21,6 +21,7 @@ const commands = {
         description: c,
         entity_type: 'company',
       })),
+      mode: 'monitoring',
     });
     console.log(JSON.stringify({ icp_id: response.id }));
   },
@@ -75,21 +76,41 @@ const commands = {
     }));
   },
 
+  // ── ICP Update ────────────────────────────────────────────────────
+  async 'update-icp'(args) {
+    const data = JSON.parse(args.data);
+    const updatePayload = {};
+    if (data.name) updatePayload.name = data.name;
+    if (data.description) updatePayload.description = data.description;
+    if (data.companies) {
+      updatePayload.entity_targets = data.companies.map(c => ({
+        description: c,
+        entity_type: 'company',
+      }));
+    }
+    if (data.entity_targets) updatePayload.entity_targets = data.entity_targets;
+    const response = await client.icp.update(args['icp-id'], updatePayload);
+    console.log(JSON.stringify(response));
+  },
+
   // ── Signal Listing (with pagination) ──────────────────────────────
   async 'list-signals'(args) {
     const allSignals = [];
     let page = 1;
     const pageSize = 50;
-    const sinceDate = args['since']
-      ? new Date(Date.now() - parseDuration(args['since'])).toISOString()
-      : undefined;
+    const days = args['since'] ? parseDurationToDays(args['since']) : 30;
 
     while (true) {
       const response = await client.signal.list({
         icp_id: args['icp-id'],
         page,
         page_size: pageSize,
-        ...(sinceDate && { created_after: sinceDate }),
+        days,
+        ...(args['signal-type'] && { signal_type: args['signal-type'] }),
+        ...(args['strength'] && { strength: args['strength'] }),
+        ...(args['search-term'] && { search_term: args['search-term'] }),
+        ...(args['sort-by'] && { sort_by: args['sort-by'] }),
+        ...(args['order'] && { order: args['order'] }),
       });
 
       allSignals.push(...(response.signals || []));
@@ -171,7 +192,6 @@ const commands = {
       name: args['name'] || 'Wave Signal Monitor Schedule',
       task_id: args['task-id'],
       icp_id: args['icp-id'],
-      frequency,
       cron_expression: cronExpr,
     });
     console.log(JSON.stringify({ schedule_id: response.id }));
@@ -179,16 +199,24 @@ const commands = {
 
   // ── Update Task ───────────────────────────────────────────────────
   async 'update-task'(args) {
-    const addCriteria = args['add'] || '';
-    console.log(JSON.stringify({
-      action: 'update',
-      added: addCriteria,
-      note: 'Task criteria updated. New signals will reflect changes.',
-    }));
+    const data = JSON.parse(args['task-config'] || args.data || '{}');
+    const response = await client.task.update(args['task-id'], data);
+    console.log(JSON.stringify(response));
   },
 };
 
-// ── Duration Parser ───────────────────────────────────────────────────
+// ── Duration to Days (integer 1-90) for Linkt API ────────────────────
+function parseDurationToDays(str) {
+  const match = str.match(/^(\d+)(m|h|d)$/);
+  if (!match) return 30;
+  const val = parseInt(match[1]);
+  const unit = match[2];
+  if (unit === 'm' || unit === 'h') return 1; // minimum 1 day
+  if (unit === 'd') return Math.max(1, Math.min(90, val));
+  return 30;
+}
+
+// ── Duration Parser (milliseconds, used by other scripts) ────────────
 function parseDuration(str) {
   const match = str.match(/^(\d+)(h|d|m)$/);
   if (!match) return 24 * 60 * 60 * 1000;

@@ -48,10 +48,8 @@ When user says "wave", "set up wave", or starts their first conversation:
 
 4. When creating Linkt resources in Step 6:
    a. Create ICP: `node {baseDir}/scripts/linkt-client.mjs create-icp --data '<json>'`
-   b. Create sheet: `node {baseDir}/scripts/linkt-client.mjs create-sheet --icp-id <icp_id> --name 'Wave Companies'`
-   c. Create task: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <icp_id> --topic '<criteria>' --name 'Wave Signal Monitor'`
-   d. Execute first run: `node {baseDir}/scripts/linkt-client.mjs execute-task --task-id <task_id> --icp-id <icp_id>`
-   e. Create schedule: `node {baseDir}/scripts/linkt-client.mjs create-schedule --task-id <task_id> --icp-id <icp_id> --frequency daily`
+   b. Create task: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <icp_id> --topic '<criteria>' --name 'Wave Signal Monitor'`
+   c. Create schedule: `node {baseDir}/scripts/linkt-client.mjs create-schedule --task-id <task_id> --icp-id <icp_id> --frequency daily`
 
 5. CRITICAL -- persist profile to SQLite with timezone (cron jobs CANNOT access session memory):
    `node {baseDir}/scripts/feedback-store.mjs save-profile --icp-id <id> --task-id <id> --schedule-id <id> --interests-raw '<text>' --interests-json '<json>' --user-name '<name>' --user-location '<city>' --user-timezone '<tz>'`

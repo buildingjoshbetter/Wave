@@ -155,6 +155,32 @@ const steps = {
   //        briefing-worth signals, briefing-filtered signals
   0() {
     const db = openDb();
+
+    // Recovery: if a previous demo crashed between steps, restore the backed-up profile first
+    try {
+      const hasBackup = db.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='_demo_profile_backup'").get();
+      if (hasBackup) {
+        const backup = db.prepare('SELECT data FROM _demo_profile_backup LIMIT 1').get();
+        if (backup && backup.data) {
+          const p = JSON.parse(backup.data);
+          db.prepare(`UPDATE user_profile SET
+            icp_id = ?, task_id = ?, schedule_id = ?,
+            interests_raw = ?, interests_json = ?,
+            user_name = ?, user_location = ?, user_timezone = ?,
+            negative_filters = ?, quiet_hours_enabled = ?,
+            telegram_chat_id = ?, updated_at = datetime('now')
+            WHERE id = 1`).run(
+            p.icp_id, p.task_id, p.schedule_id,
+            p.interests_raw, p.interests_json,
+            p.user_name, p.user_location, p.user_timezone,
+            p.negative_filters, p.quiet_hours_enabled,
+            p.telegram_chat_id
+          );
+          db.prepare('DROP TABLE IF EXISTS _demo_profile_backup').run();
+        }
+      }
+    } catch (_) { /* no backup to restore */ }
+
     db.prepare("DELETE FROM signals_seen WHERE signal_id LIKE 'sig_demo_%' OR signal_id LIKE 'sig_seed_%'").run();
     db.prepare("DELETE FROM feedback WHERE signal_id LIKE 'sig_demo_%' OR signal_id LIKE 'sig_seed_%'").run();
 
