@@ -105,19 +105,23 @@ After user confirms:
    industries array, geographic array.
    Save icp_id.
 
-2. Create task: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <icp_id> --topic '<natural language criteria mentioning specific companies and signal types>' --name 'Wave Signal Monitor'`
+2. Create sheet: `node {baseDir}/scripts/linkt-client.mjs create-sheet --icp-id <icp_id> --name 'Wave Companies'`
+   Required for Linkt signal workflows. Save sheet_id.
 
-3. Create schedule: `node {baseDir}/scripts/linkt-client.mjs create-schedule --task-id <task_id> --icp-id <icp_id> --frequency daily`
+3. Create task: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <icp_id> --topic '<natural language criteria mentioning specific companies and signal types>' --name 'Wave Signal Monitor'`
+   Save task_id. This also triggers the first execution automatically.
+
+4. Create schedule: `node {baseDir}/scripts/linkt-client.mjs create-schedule --task-id <task_id> --icp-id <icp_id> --frequency daily`
    Save schedule_id.
 
-4. Set up cron jobs (use the user's timezone from Step 4):
+5. Set up cron jobs (use the user's timezone from Step 4):
    - Signal poll: every 30 min, user's timezone
    - Morning briefing: 8 AM, user's timezone
 
-5. CRITICAL — persist to SQLite:
+6. CRITICAL — persist to SQLite:
    `node {baseDir}/scripts/feedback-store.mjs save-profile --icp-id <id> --task-id <id> --schedule-id <id> --interests-raw '<user text>' --interests-json '<json>' --user-name '<name>' --user-location '<city>' --user-timezone '<tz>'`
 
-6. Send:
+7. Send:
 
 **You're live.** First signal scan is running now. I'll check every
 30 minutes and send you a briefing at 8 AM {timezone_abbreviation} each morning.
