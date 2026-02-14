@@ -115,6 +115,17 @@ const commands = {
     console.log(JSON.stringify(response));
   },
 
+  // ── Sheet Creation ─────────────────────────────────────────────────
+  async 'create-sheet'(args) {
+    const response = await client.sheet.create({
+      icp_id: args['icp-id'],
+      name: args['name'] || 'Wave Companies',
+      description: args['description'] || 'Companies monitored by Wave',
+      entity_type: args['entity-type'] || 'company',
+    });
+    console.log(JSON.stringify({ sheet_id: response.id }));
+  },
+
   // ── Signal Listing (with pagination) ──────────────────────────────
   async 'list-signals'(args) {
     const allSignals = [];
