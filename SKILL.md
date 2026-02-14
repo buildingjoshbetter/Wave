@@ -132,21 +132,29 @@ before you move on.
 
 Run the demo in this exact sequence:
 
+**CRITICAL DEMO RULE — MESSAGE ORDERING:**
+ALL user-visible messages during the demo MUST be sent via the `message` tool
+with `action=send`. After each message tool call, reply with ONLY `NO_REPLY`.
+NEVER send narration, status updates, or "thinking out loud" text as regular
+replies — they will arrive OUT OF ORDER and break the demo flow. If you need
+to run scripts, wait for results, or spawn sub-agents, do it silently. The user
+should only see the polished demo messages, never your internal process.
+
 **1. Introduction**
 
-Send to Telegram:
-"**DEMO MODE ACTIVATED**
+Send via message tool:
+"🌊 **DEMO MODE ACTIVATED**
 
 I'll walk you through Wave's four core features using real signal data:
 
-1. **Morning Briefing** — your daily intelligence digest
-2. **Real-time Signal Alerts** — instant notifications when something breaks
-3. **Pattern Detection** — connecting dots across days that a human would miss
-4. **War Room** — multi-agent debate on high-impact events
+1. 📊 **Morning Briefing** — your daily intelligence digest
+2. ⚡ **Real-time Signal Alerts** — instant notifications when something breaks
+3. 🔗 **Pattern Detection** — connecting dots across days that a human would miss
+4. 🎯 **War Room** — multi-agent debate on high-impact events
 
 Each feature will fire one by one. Sit back."
 
-**Wait 10 seconds.**
+Reply: NO_REPLY. Then wait 10 seconds.
 
 **2. Reset environment (silent)**
 
@@ -156,8 +164,8 @@ Do NOT send output to user. Wait 3 seconds.
 
 **3. Feature 1: Morning Briefing**
 
-First, send the feature introduction to Telegram:
-"**Feature 1: Morning Briefing**
+Send via message tool:
+"📊 **Feature 1: Morning Briefing**
 
 Every morning, Wave reviews all signals from the past 24 hours, scores them
 by relevance to your profile, and delivers a structured digest. High priority
@@ -165,46 +173,42 @@ items surface to the top. Low-relevance noise gets filtered out.
 
 Here's what this morning's briefing looks like:"
 
-**Wait 8 seconds.**
+Reply: NO_REPLY. Then wait 8 seconds.
 
 Then run: `node {baseDir}/scripts/demo-mode.mjs --step 1`
 Then run: `node {baseDir}/scripts/briefing-builder.mjs --icp-id demo`
-Parse the briefing JSON and format per /radar-briefing instructions:
-- HIGH PRIORITY: Cursor Enterprise + OpenAI/Windsurf acquisition
-- WORTH KNOWING: Mistral/SAP partnership, DeepMind hiring, Replit funding
-- FILTERED OUT: count of low-relevance signals
-- PATTERNS: Anthropic (4 signals across multiple types)
-- Number each item. Tell user "Reply with a number for deep dive."
+Parse the briefing JSON and format per /radar-briefing instructions.
+Send the formatted briefing via message tool. Reply: NO_REPLY.
 
-**Wait 25 seconds** so audience can read the full briefing.
+Wait 25 seconds so audience can read the full briefing.
 
 **4. Feature 2: Real-time Signal Alert**
 
-First, send the feature introduction to Telegram:
-"**Feature 2: Real-time Signal Alerts**
+Send via message tool:
+"⚡ **Feature 2: Real-time Signal Alerts**
 
 Wave doesn't just send daily briefings — when a high-impact signal lands
 (score 80%+), you get an instant alert with context on why it matters to you.
 
 Watch this one come in live:"
 
-**Wait 8 seconds.**
+Reply: NO_REPLY. Then wait 8 seconds.
 
 Then run: `node {baseDir}/scripts/demo-mode.mjs --step 2`
 Parse the JSON output. Process through normal Signal Evaluation Logic:
 - Score 0.82 >= 0.8 → forward immediately
-- Format with **Cursor**, *product_launch*, score as percentage
+- Format with **Cursor**, *product_launch*, score as percentage relevance
 - Add personalized context: Cursor going enterprise means competitive pressure
   for anyone building dev tools. Regulated industries are opening up.
 - Send via message tool with inline buttons (Tell Me More / Not Relevant / Save).
-  See "Inline Buttons" section for exact JSON. Reply NO_REPLY after sending.
+  Reply: NO_REPLY.
 
-**Wait 20 seconds.**
+Wait 20 seconds.
 
 **5. Feature 3: Pattern Detection**
 
-First, send the feature introduction to Telegram:
-"**Feature 3: Pattern Detection**
+Send via message tool:
+"🔗 **Feature 3: Pattern Detection**
 
 Most signals mean nothing alone. But when Wave sees multiple signals about
 the same company over several days, it connects the dots and flags a pattern.
@@ -212,24 +216,22 @@ the same company over several days, it connects the dots and flags a pattern.
 This next signal scores below the alert threshold on its own — but watch
 what Wave does with it:"
 
-**Wait 8 seconds.**
+Reply: NO_REPLY. Then wait 8 seconds.
 
 Then run: `node {baseDir}/scripts/demo-mode.mjs --step 3`
 Parse the JSON output. The output includes a `pattern_hint` field.
 - The signal itself scores 0.71 (investigate range), but the PATTERN is the story
 - Read `pattern_hint`: it shows 4 signals about Anthropic in the past week
-- Send the signal AND highlight the pattern:
-  "I've now seen 4 signals about **Anthropic** in the past week:
-  office lease + hiring surge + Oracle partnership + more infrastructure hiring
-  in Austin. **Pattern: major Austin expansion incoming.**"
-- This is Wave connecting dots across days that a human would miss
+- Send the signal AND highlight the pattern via message tool.
+  Include the pattern summary showing connected dots across days.
+  Reply: NO_REPLY.
 
-**Wait 25 seconds.**
+Wait 25 seconds.
 
 **6. Feature 4: War Room**
 
-First, send the feature introduction to Telegram:
-"**Feature 4: War Room**
+Send via message tool:
+"🎯 **Feature 4: War Room**
 
 When a signal scores 85%+ (critical impact), Wave automatically triggers a
 multi-agent debate. Three AI agents — an Analyst, a Skeptic, and a Strategist —
@@ -237,37 +239,40 @@ argue about what the signal means for your business.
 
 This next one is a big deal:"
 
-**Wait 8 seconds.**
+Reply: NO_REPLY. Then wait 8 seconds.
 
 Then run: `node {baseDir}/scripts/demo-mode.mjs --step 4`
 Parse the JSON output. Score 0.95 >= 0.85 → trigger war room.
-- First send the signal notification (OpenAI acquires Windsurf for $3B)
-- Then follow the full /radar-warroom flow:
-  spawn three sub-agents (Analyst, Skeptic, Strategist), wait for responses,
-  synthesize consensus, format as war room debate summary
-- This demonstrates multi-agent reasoning on high-impact signals
-
-**Wait 45 seconds** (war room sub-agents need time).
+- First send the signal notification via message tool (OpenAI acquires Windsurf for $3B).
+  Reply: NO_REPLY.
+- Then spawn three sub-agents (Analyst, Skeptic, Strategist) and WAIT for all
+  responses (timeout: 45 seconds each). Do this silently — no status messages.
+- Once all responses are collected, synthesize consensus and send the formatted
+  war room debate summary via message tool. Reply: NO_REPLY.
 
 **7. Wrap up**
 
-Send:
-"**DEMO COMPLETE**
+Send via message tool:
+"🌊 **DEMO COMPLETE**
 
 That was Wave's four core features:
 
-1. **Morning Briefing** — structured daily digest with priority scoring
-2. **Real-time Alerts** — instant notification on high-impact signals
-3. **Pattern Detection** — connecting dots across days of data
-4. **War Room** — multi-agent debate on critical events
+1. 📊 **Morning Briefing** — structured daily digest with priority scoring
+2. ⚡ **Real-time Alerts** — instant notification on high-impact signals
+3. 🔗 **Pattern Detection** — connecting dots across days of data
+4. 🎯 **War Room** — multi-agent debate on critical events
 
 All running autonomously in a single Telegram chat.
 
 Type **set up wave** to configure your own profile, or ask me anything."
 
+Reply: NO_REPLY.
+
 **Demo mode notes:**
-- If any step fails, log the error, tell the user "Skipping [feature] due to a
-  hiccup", and continue to the next step. Do not abort the entire demo.
+- ALL messages go through the message tool. Your reply is ALWAYS `NO_REPLY`.
+- NEVER send thinking, status updates, or narration as regular replies.
+- If any step fails, send via message tool: "⚠️ Skipping [feature] due to a
+  hiccup" and continue to the next step. Do not abort the entire demo.
 - The demo uses ICP ID "demo" for all signals.
 - After demo completes, normal Wave functionality resumes immediately.
 - If user taps inline buttons during the demo, acknowledge briefly but do not
