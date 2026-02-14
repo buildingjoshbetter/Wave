@@ -1,0 +1,32 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" role="img" aria-label="Wave logo">
+  <defs>
+    <linearGradient id="wg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#1a237e" />
+      <stop offset="100%" stop-color="#2979ff" />
+    </linearGradient>
+  </defs>
+
+  <!-- Signal waves -->
+  <path
+    d="M 25 75 Q 65 30, 100 75 T 175 75"
+    fill="none"
+    stroke="url(#wg)"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 25 110 Q 65 65, 100 110 T 175 110"
+    fill="none"
+    stroke="url(#wg)"
+    stroke-width="14"
+    stroke-linecap="round"
+  />
+  <path
+    d="M 55 145 Q 80 120, 100 145 T 145 145"
+    fill="none"
+    stroke="url(#wg)"
+    stroke-width="10"
+    stroke-linecap="round"
+    opacity="0.5"
+  />
+</svg>

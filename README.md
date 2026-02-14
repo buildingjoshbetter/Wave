@@ -1,160 +1,189 @@
-# Wave
+<p align="center">
+  <img src="assets/wave-logo.svg" alt="Wave" width="120" />
+</p>
 
-**Your personal intelligence agent. Real signals. Zero noise.**
+<h1 align="center">Wave</h1>
 
-Wave is an [OpenClaw](https://github.com/openclaw/openclaw) skill that monitors the companies, industries, and topics you care about -- and only texts you when something actually matters. Built on [Linkt.ai](https://linkt.ai)'s signal engine.
+<p align="center">
+  <strong>Your personal intelligence agent.</strong><br>
+  Real signals. Zero noise.
+</p>
 
-**No app to download. No dashboard to check. Just a Telegram chat with an AI analyst that gets smarter every day.**
+<p align="center">
+  <a href="#installation">Install</a> · <a href="#what-it-does">What It Does</a> · <a href="#why">Why</a> · <a href="#demo">Demo</a>
+</p>
+
+---
 
 ## What It Does
 
-- Tell the bot about yourself in plain English
-- It monitors 17+ signal types: product launches, funding rounds, executive moves, regulatory changes, patents, hiring surges, and more
-- Signals get analyzed, not just forwarded -- competitive context, source research, and relevance scoring
-- Pattern detection across signals ("4 signals suggest Company X is preparing a major launch")
-- Multi-agent war room debates on high-impact signals
-- Daily morning intelligence briefings
-- Learns from your feedback -- gets more accurate over time
+Wave is an [OpenClaw](https://openclaw.ai) skill that monitors the companies, industries, and topics you care about -- and only texts you when something actually matters.
 
-## Quick Start
+No app to download. No dashboard to check. Just a Telegram chat with an AI analyst that learns what you care about and gets smarter every day.
+
+You describe your world in plain English. Wave monitors it 24/7 via [Linkt.ai](https://linkt.ai)'s signal engine. When something happens that matters to *you* -- a competitor launches a product, a company you're watching starts hiring aggressively, a regulatory change hits your industry -- Wave doesn't just forward a headline. It investigates, analyzes, and tells you *why it matters to your specific situation*.
+
+### Features
+
+- **Chain reactions** -- When a signal arrives, Wave doesn't stop at the headline. It visits the source, checks careers pages, scans GitHub repos, cross-references with your profile, and delivers a 500-800 word competitive intelligence brief. Automatically.
+- **Pattern detection** -- Connects signals across days and weeks. "4 signals about Anthropic in 10 days: office lease + hiring surge + partnership + more hiring = major expansion incoming." You'd never catch that manually.
+- **War room** -- Three AI agents debate high-impact signals from different angles. Analyst (factual), Skeptic (counterarguments), Strategist (what it means for *your* business). Real multi-agent consensus, not a single opinion.
+- **Morning briefing** -- One daily synthesis instead of 15 individual pings. HIGH PRIORITY, WORTH KNOWING, and FILTERED OUT. Reply with a number for a deep dive on any item.
+- **Natural refinement** -- "Stop sending me patent filings." "Add Linear to my watchlist." "How's my accuracy?" Just talk to it.
+- **Learns from feedback** -- Every thumbs up or thumbs down adjusts the relevance model. It gets better the more you use it.
+- **17+ signal types** -- Funding rounds, product launches, acquisitions, leadership changes, hiring surges, partnerships, regulatory changes, expansions, patents, and more.
+
+## Installation
 
 ### Prerequisites
 
-- [OpenClaw](https://github.com/openclaw/openclaw) installed and running
-- A Telegram bot (create one via [@BotFather](https://t.me/BotFather))
-- A [Linkt.ai](https://app.linkt.ai) API key (free tier available)
+- [OpenClaw](https://github.com/openclaw/openclaw) installed and configured
+- Telegram bot set up in OpenClaw (create one via [@BotFather](https://t.me/BotFather))
+- [Linkt.ai](https://app.linkt.ai) API key (free tier available)
 
-### Install (60 seconds)
+### Install from ClawHub
 
-1. Clone the repo:
-   ```bash
-   git clone https://github.com/buildingjoshbetter/wave.git
-   ```
+```bash
+clawhub install signal-radar
+```
+
+### Manual Installation
+
+1. Clone this repo:
+```bash
+git clone https://github.com/buildingjoshbetter/wave.git
+```
 
 2. Copy the skill into OpenClaw:
-   ```bash
-   cp -r wave/skill ~/.openclaw/skills/signal-radar
-   ```
+```bash
+cp -r wave/skill ~/.openclaw/skills/signal-radar
+cd ~/.openclaw/skills/signal-radar && npm install
+```
 
-3. Install dependencies:
-   ```bash
-   cd ~/.openclaw/skills/signal-radar
-   npm install
-   ```
+3. Add your API key to `~/.openclaw/openclaw.json`:
+```json
+{
+  "skills": {
+    "entries": {
+      "signal-radar": {
+        "enabled": true,
+        "env": {
+          "LINKT_API_KEY": "sk-your-linkt-api-key"
+        }
+      }
+    }
+  }
+}
+```
 
-4. Add your Linkt.ai API key to OpenClaw config:
-   ```bash
-   nano ~/.openclaw/openclaw.json
-   ```
-   ```json
-   {
-     "skills": {
-       "entries": {
-         "signal-radar": {
-           "enabled": true,
-           "env": {
-             "LINKT_API_KEY": "sk-your-linkt-api-key"
-           }
-         }
-       }
-     }
-   }
-   ```
+4. Restart OpenClaw:
+```bash
+openclaw gateway restart
+```
 
-5. Restart OpenClaw:
-   ```bash
-   openclaw gateway restart
-   ```
-
-6. Open Telegram and message your bot: "Set up my signal radar"
+5. Open Telegram. Message your bot: "Set up my signal radar."
 
 That's it. You're live.
 
-## How It Works
+## Demo
 
-1. You tell Wave about yourself -- it creates a monitoring profile on Linkt.ai
-2. Linkt.ai monitors the web 24/7 for relevant signals
-3. Wave polls for new signals every 30 minutes
-4. Each signal is analyzed by the AI agent for relevance to YOUR interests
-5. Only signals above your threshold get sent to Telegram
-6. You give feedback -- Wave gets smarter over time
-
-## Features
-
-### Signal Chain Reactions
-Doesn't just forward headlines. Investigates automatically -- visits source articles, checks careers pages, cross-references with your profile, and delivers a competitive intelligence brief.
-
-### Pattern Detection
-Connects signals across days and weeks to predict what's coming. "4 signals about Anthropic in 10 days: office lease + hiring surge + partnership + more hiring = major expansion incoming."
-
-### War Room
-Three AI agents debate high-impact signals from different angles:
-- **Analyst** (Blue): factual assessment and market context
-- **Skeptic** (Red): counterarguments and risks of overreaction
-- **Strategist** (Green): what this means for YOUR business specifically
-
-### Morning Briefing
-One daily synthesis instead of 15 individual pings. HIGH PRIORITY, WORTH KNOWING, and FILTERED OUT -- reply with a number for a deep dive on any item.
-
-### Natural Refinement
-- "stop sending me patent filings" -- adjusts filters instantly
-- "add Linear to my watchlist" -- updates monitoring
-- "how's my accuracy?" -- shows feedback stats
-
-## Configuration
-
-Key settings (managed via natural language or SQLite):
-
-| Setting | Default | Description |
-|---------|---------|-------------|
-| Signal threshold | 0.5 | Minimum relevance score to send |
-| War room threshold | 0.85 | Score that triggers multi-agent debate |
-| Morning briefing | 8:00 AM | Daily briefing time |
-| Quiet hours | 10 PM - 7 AM | Signals queued, not sent |
-| Poll interval | 30 minutes | How often to check for new signals |
-
-## Project Structure
+Tell Wave about yourself. It handles the rest.
 
 ```
-wave/
-├── skill/                    # The OpenClaw skill (this is the product)
-│   ├── SKILL.md              # Core skill definition
-│   ├── package.json          # Node.js dependencies
-│   ├── scripts/
-│   │   ├── linkt-client.mjs  # Linkt.ai SDK wrapper
-│   │   ├── signal-poll.mjs   # Background signal polling
-│   │   ├── feedback-store.mjs# SQLite operations + escapeHtml
-│   │   └── briefing-builder.mjs # Morning briefing synthesizer
-│   └── references/
-│       ├── onboarding-flow.md
-│       ├── signal-processing.md
-│       ├── war-room-prompts.md
-│       └── linkt-api-reference.md
-├── demo/                     # Demo tooling (not part of the core skill)
-│   ├── demo-triggers.mjs
-│   ├── seed-patterns.sql
-│   └── demo-cache/
-├── docs/                     # Additional documentation
-│   ├── SETUP.md
-│   ├── CONFIGURATION.md
-│   └── ARCHITECTURE.md
-├── README.md
-├── LICENSE
-├── .env.example
-└── .gitignore
+You: I'm building a dev tools startup in Austin. I watch Cursor, Replit,
+     and Anthropic closely. I care about product launches, funding,
+     acquisitions, and anything in the AI coding space.
+
+Wave: Got it. Here's what I extracted:
+
+      Companies: Cursor, Replit, Anthropic
+      Industries: Developer Tools, AI/ML
+      Signal Types: product_launch, funding, acquisition, hiring_surge, partnership
+      Focus: AI coding tools, Austin TX
+
+      Does this look right?
+
+      [ Looks good ]  [ Edit ]
 ```
 
-## Built With
+Then signals start flowing:
 
-- [OpenClaw](https://github.com/openclaw/openclaw) -- AI agent runtime
-- [Linkt.ai](https://linkt.ai) -- Signal monitoring engine
-- [Telegram](https://telegram.org) -- User interface
-- [better-sqlite3](https://github.com/WiseLibs/better-sqlite3) -- Local database
+```
+Wave: SIGNAL: Cursor announces Enterprise tier
+      Score: 82% | Type: product_launch
+
+      Cursor just launched an enterprise offering with SOC2, SSO, and
+      private cloud deployment. This directly targets the regulated
+      industries (fintech, healthcare) that have been slow to adopt
+      AI coding tools -- the same segment your startup competes in.
+
+      [ Tell Me More ]  [ Not Relevant ]  [ Save ]
+```
+
+Ask for more and Wave goes deep:
+
+```
+You: [taps Tell Me More]
+
+Wave: DEEP DIVE: Cursor Enterprise
+
+      WHAT HAPPENED: Cursor launched enterprise features including...
+      WHY IT MATTERS: The enterprise push signals Cursor is moving
+      upmarket, directly into territory where...
+      WHAT IT MEANS FOR YOU: As a dev tools startup, this narrows
+      your window to...
+
+      Confidence: HIGH (3 corroborating sources)
+      Recommended action: Accelerate your enterprise roadmap.
+
+      [ Save this ]  [ Rate 1-10 ]
+```
+
+High-impact signals trigger the war room:
+
+```
+Wave: WAR ROOM: OpenAI acquires Windsurf for $3B
+
+      Analyst: Factual assessment -- $3B for 15M users represents...
+      Skeptic: This could be defensive -- OpenAI's core business...
+      Strategist: For YOUR startup, this means the IDE layer is
+      consolidating fast. Your window to build is...
+
+      Consensus: 3/3 agree this reshapes the competitive landscape.
+      Final Score: 95% - CRITICAL
+      Bottom Line: This changes your competitive map. Act this week.
+```
+
+## Why
+
+I was spending 2 hours a day manually checking competitors.
+
+Twitter. TechCrunch. LinkedIn. Hacker News. SEC filings. Job boards. GitHub trending. Product Hunt. Every morning, the same circuit. Most days, nothing relevant. But you can't *not* check, because the one day you skip is the day your competitor announces exactly the thing you were about to build.
+
+The information is out there. It's just scattered across 50 sources, buried under noise, and completely undifferentiated. A funding round for a biotech startup and a funding round for your direct competitor look the same in a news feed. But one is noise and the other is a five-alarm fire.
+
+I wanted an agent that understood *my* specific world -- my competitors, my industry, my interests -- and could filter the entire internet down to the 3-5 things I actually need to know today. Not a dashboard I have to check. Not a newsletter I have to read. Just a Telegram message that says "hey, this happened, here's why you should care, and here's what I'd do about it."
+
+Wave is that agent. It monitors everything, filters aggressively, investigates automatically, and gets smarter the more you use it. The AI doesn't just forward -- it *analyzes*. It connects patterns across days and weeks that a human would miss. It debates high-impact signals from multiple angles before giving you a recommendation.
+
+350 lines of code. 24 hours to build. One Telegram chat that watches your world for you.
 
 ## Built By
 
-[@building_josh](https://twitter.com/building_josh)
+**[@Building_Josh](https://twitter.com/Building_Josh)**
+
+Built at the ATIX Hackathon because competitive intelligence shouldn't require a Bloomberg terminal.
 
 ## License
 
-MIT
+[MIT](LICENSE) -- Intelligence should be accessible to everyone.
+
+---
+
+<p align="center">
+  <em>"The information is out there. You just need someone watching."</em>
+</p>
+
+<p align="center">
+  <img src="assets/wave-logo.svg" alt="Wave" width="40" />
+</p>
