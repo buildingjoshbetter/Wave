@@ -5,7 +5,7 @@
   "type": "module",
   "private": true,
   "dependencies": {
-    "@linkt/sdk": "^1.0.0",
+    "@linkt/sdk": "^0.6.0",
     "better-sqlite3": "^11.0.0"
   }
 }
