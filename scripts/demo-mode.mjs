@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // demo-mode.mjs - Self-contained demo signal injector for Wave
 // Usage: node demo-mode.mjs --step <N>
-// Steps: 0=reset+seed, 1=chain, 2=pattern, 3=warroom, 4=briefing-seed, 5=briefing-trigger
+// Steps: 0=reset+seed-all, 1=briefing-trigger, 2=chain, 3=pattern, 4=warroom
 
 import Database from 'better-sqlite3';
 import { join, dirname } from 'path';
@@ -147,35 +147,54 @@ function insertSignal(db, s, daysAgo) {
 }
 
 // ── Steps ────────────────────────────────────────────────────────────
+// New order: 0=reset+seed-all → 1=briefing → 2=signal alert → 3=pattern → 4=warroom
 
 const steps = {
-  // Step 0: Clean slate + seed background Anthropic signals for pattern detection
+  // Step 0: Clean slate + seed ALL demo data upfront
+  // Seeds: background Anthropic signals (for pattern detection later),
+  //        briefing-worth signals, briefing-filtered signals
   0() {
     const db = openDb();
     db.prepare("DELETE FROM signals_seen WHERE signal_id LIKE 'sig_demo_%' OR signal_id LIKE 'sig_seed_%'").run();
     db.prepare("DELETE FROM feedback WHERE signal_id LIKE 'sig_demo_%' OR signal_id LIKE 'sig_seed_%'").run();
 
+    // Seed background Anthropic signals (for pattern detection in step 3)
     for (const s of SEED_SIGNALS) {
       insertSignal(db, s, s.days_ago);
     }
+
+    // Seed briefing signals upfront (for morning briefing in step 1)
+    for (const s of BRIEFING_WORTH) insertSignal(db, s);
+    for (const s of BRIEFING_FILTERED) insertSignal(db, s);
 
     db.prepare(`INSERT OR REPLACE INTO user_profile (id, icp_id, quiet_hours_enabled)
       VALUES (1, 'demo', 0)`).run();
 
     db.close();
     console.log(JSON.stringify({
-      step: 0, action: 'reset_and_seed', seeded: SEED_SIGNALS.length,
-      message: 'Demo environment ready. Background Anthropic signals seeded for pattern detection.',
+      step: 0, action: 'reset_and_seed_all',
+      seeded_background: SEED_SIGNALS.length,
+      seeded_briefing_worth: BRIEFING_WORTH.length,
+      seeded_briefing_filtered: BRIEFING_FILTERED.length,
+      message: 'Demo environment ready. All signals seeded.',
     }));
   },
 
-  // Step 1: Chain reaction — Cursor Enterprise (score 0.82)
+  // Step 1: Trigger morning briefing (data already seeded in step 0)
   1() {
+    console.log(JSON.stringify({
+      step: 1, action: 'trigger_briefing',
+      message: 'Briefing data ready. Run briefing-builder.mjs --icp-id demo to generate the morning briefing.',
+    }));
+  },
+
+  // Step 2: Real-time signal alert — Cursor Enterprise (score 0.82)
+  2() {
     const db = openDb();
     insertSignal(db, CHAIN_SIGNAL);
     db.close();
     console.log(JSON.stringify({
-      step: 1, action: 'inject_signal',
+      step: 2, action: 'inject_signal',
       signal_id: CHAIN_SIGNAL.signal_id,
       signal_type: CHAIN_SIGNAL.signal_type,
       score: CHAIN_SIGNAL.linkt_score,
@@ -184,8 +203,8 @@ const steps = {
     }));
   },
 
-  // Step 2: Pattern detection — Anthropic hiring (score 0.71) + pattern query
-  2() {
+  // Step 3: Pattern detection — Anthropic hiring (score 0.71) + pattern query
+  3() {
     const db = openDb();
     insertSignal(db, PATTERN_SIGNAL);
 
@@ -199,7 +218,7 @@ const steps = {
 
     db.close();
     console.log(JSON.stringify({
-      step: 2, action: 'inject_signal',
+      step: 3, action: 'inject_signal',
       signal_id: PATTERN_SIGNAL.signal_id,
       signal_type: PATTERN_SIGNAL.signal_type,
       score: PATTERN_SIGNAL.linkt_score,
@@ -213,41 +232,19 @@ const steps = {
     }));
   },
 
-  // Step 3: War room — OpenAI acquires Windsurf (score 0.95)
-  3() {
+  // Step 4: War room — OpenAI acquires Windsurf (score 0.95)
+  4() {
     const db = openDb();
     insertSignal(db, WARROOM_SIGNAL);
     db.close();
     console.log(JSON.stringify({
-      step: 3, action: 'inject_signal',
+      step: 4, action: 'inject_signal',
       signal_id: WARROOM_SIGNAL.signal_id,
       signal_type: WARROOM_SIGNAL.signal_type,
       score: WARROOM_SIGNAL.linkt_score,
       entity: 'OpenAI, Windsurf',
       summary: WARROOM_SIGNAL.summary,
       war_room: true,
-    }));
-  },
-
-  // Step 4: Silently seed signals for the morning briefing
-  4() {
-    const db = openDb();
-    for (const s of BRIEFING_WORTH) insertSignal(db, s);
-    for (const s of BRIEFING_FILTERED) insertSignal(db, s);
-    db.close();
-    console.log(JSON.stringify({
-      step: 4, action: 'seed_briefing_signals',
-      worth_knowing: BRIEFING_WORTH.length,
-      filtered: BRIEFING_FILTERED.length,
-      message: 'Briefing signals seeded. Ready for briefing generation.',
-    }));
-  },
-
-  // Step 5: Signal to trigger briefing (no injection)
-  5() {
-    console.log(JSON.stringify({
-      step: 5, action: 'trigger_briefing',
-      message: 'All demo signals injected. Run briefing-builder.mjs --icp-id demo to generate the morning briefing.',
     }));
   },
 };
@@ -258,7 +255,7 @@ if (!steps[step]) {
   console.error(JSON.stringify({
     error: `Unknown step: ${step}`,
     available: Object.keys(steps).map(Number),
-    usage: 'node demo-mode.mjs --step <0-5>',
+    usage: 'node demo-mode.mjs --step <0-4>',
   }));
   process.exit(1);
 }
