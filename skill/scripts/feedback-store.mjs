@@ -134,6 +134,31 @@ const commands = {
     console.log(JSON.stringify({ total_signals: total, sent_to_user: sent, feedback: fbStats, top_positive_types: topTypes }));
   },
 
+  'save-profile'(args) {
+    const icpId = args['icp-id'];
+    if (!icpId) {
+      console.error(JSON.stringify({ error: 'Missing --icp-id' }));
+      process.exit(1);
+    }
+    db.prepare(`INSERT OR REPLACE INTO user_profile
+      (id, icp_id, task_id, schedule_id, interests_raw, interests_json, telegram_chat_id, updated_at)
+      VALUES (1, ?, ?, ?, ?, ?, ?, datetime('now'))`)
+      .run(icpId, args['task-id'] || null, args['schedule-id'] || null,
+        args['interests-raw'] || null, args['interests-json'] || null,
+        args['chat-id'] || null);
+    const profile = db.prepare('SELECT * FROM user_profile WHERE id = 1').get();
+    console.log(JSON.stringify(profile));
+  },
+
+  'get-profile'() {
+    const profile = db.prepare('SELECT * FROM user_profile WHERE id = 1').get();
+    if (!profile) {
+      console.log(JSON.stringify({ error: 'No profile found. Run onboarding first.' }));
+    } else {
+      console.log(JSON.stringify(profile));
+    }
+  },
+
   patterns() {
     const patterns = db.prepare(`
       SELECT entity_names, COUNT(*) as count, GROUP_CONCAT(DISTINCT signal_type) as types,

@@ -34,10 +34,15 @@ Keep it tight. No extra commentary. No "Here's what I extracted" preamble.
 ## Message 3: Go Live
 After user confirms (or after applying edits):
 
-1. Run `linkt-client.mjs create-icp` with extracted data
-2. Run `linkt-client.mjs create-task` with signal topic config
-3. Store ICP ID and task ID in SQLite `user_profile` table + session memory
-4. Send:
+1. Run: `node {baseDir}/scripts/linkt-client.mjs create-icp --data '<json>'`
+   Save the icp_id from the response.
+2. Run: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <id> --topic '<criteria>'`
+   Save the task_id from the response.
+3. CRITICAL -- persist to SQLite so cron jobs can find it:
+   `node {baseDir}/scripts/feedback-store.mjs save-profile --icp-id <id> --task-id <id> --interests-raw '<user text>' --interests-json '<json>'`
+   This MUST succeed. If it fails, tell the user setup failed.
+4. Also cache icp_id and task_id in session memory for fast access.
+5. Send:
 
 You're live. Signals check every 30 min, morning briefing at 8 AM.
 

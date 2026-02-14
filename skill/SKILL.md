@@ -40,8 +40,10 @@ When user sends a message describing their interests, business, or role:
 2. Extract: company names, industries, topics of interest, geographic focus, signal types.
 3. Run: `node {baseDir}/scripts/linkt-client.mjs create-icp --data '<extracted_json>'`
 4. Run: `node {baseDir}/scripts/linkt-client.mjs create-task --icp-id <id> --topic '<topic_criteria>'`
-5. Store the ICP ID and task ID in BOTH session memory AND SQLite (user_profile table). Cron jobs read from SQLite since they run in isolated sessions.
-6. Confirm to user what you will monitor and how often.
+5. CRITICAL -- persist profile to SQLite (cron jobs run in isolated sessions and CANNOT access session memory):
+   `node {baseDir}/scripts/feedback-store.mjs save-profile --icp-id <id> --task-id <id> --interests-raw '<what user said>' --interests-json '<structured json>'`
+6. To read the saved profile later: `node {baseDir}/scripts/feedback-store.mjs get-profile`
+7. Confirm to user what you will monitor and how often.
 
 ### /radar-check (Manual Signal Pull)
 When user asks "what's new" or "any signals":
